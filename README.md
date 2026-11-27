@@ -33,7 +33,7 @@
 
 ## 全功能实机与模拟器界面一览
 
-以下 **26 张截图** 全部截取自 Android 手机与平板模拟器真实运行状态（暖白浅色主题）。
+以下 **37 张截图** 全部截取自 Android 手机与平板模拟器真实运行状态（暖白浅色主题）。
 
 ### 一、多线培养对比 × Switch 截屏本地 OCR 批量识别
 
@@ -140,7 +140,11 @@
   </tr>
 </table>
 
-### 四、三作全离线图鉴与全站模糊检索
+### 四、三作全离线图鉴与角色详情深度功能
+
+三部作品的角色详情页均不只是静态文字列表，而是内置了**初始属性 / 成长率 / 上限修正分位评级、结构化可学技能矩阵（支持筛选角色专属 / 隐藏通用或纹章士传授 / 搜索）、支援对象与属性补正、礼物餐饮偏好、立绘多造型切换以及角色并排对比**等完整功能。
+
+#### 4.1 首页入口、全站模糊搜索与《万缕千丝》角色详情全功能
 
 <table>
   <tr>
@@ -157,31 +161,108 @@
     <td align="center" width="33%">
       <img src="docs/screenshots/02_atlas_fw_characters_phone.png" alt="万缕千丝头像视觉筛选" width="250" /><br />
       <b>《万缕千丝》视觉头像筛选</b><br />
-      <sub>按主角路线与势力阵营头像卡片快速筛选角色</sub>
+      <sub>按主角路线与势力阵营头像卡片快速筛选 76 名角色</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="docs/screenshots/02c_fw_character_detail_tablet.png" alt="万缕千丝角色双栏详情" width="480" /><br />
-      <b>《万缕千丝》角色双栏详情</b><br />
-      <sub>成长率分位评级、可学技能矩阵、好感支援、逗鸟结局与加入比较/收藏笔记</sub>
+      <img src="docs/screenshots/02c_fw_character_detail_tablet.png" alt="万缕千丝角色总览与成长率分位" width="480" /><br />
+      <b>《万缕千丝》角色详情 · 基础与成长率</b><br />
+      <sub>全角色成长率四分位色卡、收藏、笔记、加入比较与四大专题页签</sub>
     </td>
     <td align="center" width="50%">
-      <img src="docs/screenshots/07_atlas_3h_detail_tablet.png" alt="风花雪月角色双栏详情" width="480" /><br />
-      <b>《风花雪月》双栏角色详情</b><br />
-      <sub>学级筛选、默认/五年后立绘切换、个人特技、初始属性分位条与可学技能</sub>
+      <img src="docs/screenshots/02d_fw_char_skills_tablet.png" alt="万缕千丝角色可学技能矩阵" width="480" /><br />
+      <b>《万缕千丝》角色 · 可学技能矩阵</b><br />
+      <sub>按武器/熟练度分类展示 60 项可学特技与战技，支持「角色专属/隐藏通用技能」筛选与搜索</sub>
     </td>
   </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/02e_fw_char_social_tablet.png" alt="万缕千丝角色好感与支援" width="480" /><br />
+      <b>《万缕千丝》角色 · 好感与支援</b><br />
+      <sub>完整 63 位支援对象头像网格（标注组合加成与对话段数），下方同步收录喜好礼物与餐饮口味</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/02f_fw_char_stories_tablet.png" alt="万缕千丝角色逗鸟与结局" width="480" /><br />
+      <b>《万缕千丝》角色 · 逗鸟问答与结局</b><br />
+      <sub>角色专属逗鸟台词与推荐反应速查，下方提供防剧透结局后日谈</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="docs/screenshots/02g_fw_char_compare_tablet.png" alt="万缕千丝角色并排成长对比" width="760" /><br />
+      <b>《万缕千丝》角色并排对比</b><br />
+      <sub>点击「加入比较」可任选多名角色并排对比成长率与初始属性，自动计算相对基准差值</sub>
+    </td>
+  </tr>
+</table>
+
+#### 4.2 《风花雪月》角色详情全功能（立绘切换 · 挖角门槛 · 技能矩阵 · 支援）
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/07_atlas_3h_detail_tablet.png" alt="风花雪月角色初始面板" width="480" /><br />
+      <b>《风花雪月》角色 · 初始属性与个人特技</b><br />
+      <sub>学级筛选、纹章标签、默认/五年后立绘切换、个人特技与 40 角色分位评级</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/07d_3h_char_timeskip_growth_tablet.png" alt="风花雪月角色成长率与入队挖角条件" width="480" /><br />
+      <b>《风花雪月》角色 · 成长率与四线挖角门槛</b><br />
+      <sub>成长率分位与合计值（如 370%）、可用路线标签、挖角属性/技能门槛与入队武装</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/07b_3h_char_skills_tablet.png" alt="风花雪月角色可学技能矩阵" width="480" /><br />
+      <b>《风花雪月》角色 · 可学技能矩阵（含五年后造型）</b><br />
+      <sub>展示 75 项可学特技/战技/魔法、武器初始等级与「★ 擅长 / 才能绽放」，支持隐藏通用技能与搜索</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/07c_3h_char_social_tablet.png" alt="风花雪月角色支援对象与好感" width="480" /><br />
+      <b>《风花雪月》角色 · 好感与支援</b><br />
+      <sub>全部支援伙伴头像卡片（点开可查阅 C/B/A 简体中文支援对话），下方收录礼物与餐厅偏好</sub>
+    </td>
+  </tr>
+</table>
+
+#### 4.3 《Engage（结合）》角色与纹章士详情全功能
+
+<table>
   <tr>
     <td align="center" width="33%">
       <img src="docs/screenshots/03_atlas_engage_home_phone.png" alt="Engage 首页与专题入口" width="240" /><br />
       <b>《Engage》资料首页</b><br />
-      <sub>25 类 2,876 条离线资料，含 20 纹章士与 492 牵绊戒指</sub>
+      <sub>25 类 2,876 条离线资料，含 42 角色、20 纹章士与 492 牵绊戒指</sub>
     </td>
     <td align="center" width="67%">
-      <img src="docs/screenshots/03b_engage_detail_tablet.png" alt="Engage 纹章士双栏详情" width="500" /><br />
+      <img src="docs/screenshots/03c_engage_char_overview_tablet.png" alt="Engage 角色按国家筛选与初始属性" width="500" /><br />
+      <b>《Engage》角色 · 国家筛选、多造型与初始面板</b><br />
+      <sub>按里特司/费列聂/布罗帝亚/索尔姆/伊尔席翁筛选，支持多造型切换、个人特技与含初始 SP / 体格的分位面板</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/03d_engage_char_growth_caps_tablet.png" alt="Engage 角色成长率与能力上限修正" width="480" /><br />
+      <b>《Engage》角色 · 成长率与能力上限修正</b><br />
+      <sub>个人成长率分位（含体格）、角色专属能力上限正负修正色卡与入队章节/武装</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/03e_engage_char_skills_tablet.png" alt="Engage 角色技能与资质矩阵" width="480" /><br />
+      <b>《Engage》角色 · 技能与天性资质</b><br />
+      <sub>固有特技 + 兵种特技 + 武器天性擅长，支持「角色专属 / 隐藏纹章士传授」筛选与搜索</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/03f_engage_char_social_tablet.png" alt="Engage 角色好感与支援补正" width="480" /><br />
+      <b>《Engage》角色 · 支援属性补正与对象</b><br />
+      <sub>顶部汇总 C/B/A/S 级支援命中/必避补正，列出全部支援对象与喜好礼物</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/03b_engage_detail_tablet.png" alt="Engage 纹章士双栏详情" width="480" /><br />
       <b>《Engage》纹章士双栏详情</b><br />
-      <sub>左侧头像列表与模糊检索，右侧登场章节、入队条件、满级牵绊加成与技能详情</sub>
+      <sub>20 位纹章士完整登场章节、入队条件、满级牵绊属性加成与声优/技能档案</sub>
     </td>
   </tr>
 </table>
