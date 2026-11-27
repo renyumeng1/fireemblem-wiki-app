@@ -273,13 +273,41 @@ adb install -r -d android-app/build/outputs/apk/debug/android-app-debug.apk
 
 ---
 
-## 免责声明与许可说明
+## 资料来源与第三方组件
 
-请在使用、构建或分发本项目前仔细阅读以下声明：
+本项目离线资料、算法规则与端侧能力整理或引用自以下网站、开源项目与公开模型（详见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)）：
 
-1. **非官方个人伴侣工具**：本项目为个人学习、研究与游玩辅助用途开发的非商业、非官方工具，与 **Nintendo（任天堂）**、**Intelligent Systems** 或任何游戏发行方无任何隶属、合作或官方授权关系。
-2. **知识产权与素材边界**：《火焰纹章（Fire Emblem）》系列名称、角色设定、数值、图标、立绘、世界地图与游戏文本等相关知识产权均归其原版权方及社区原始整理者所有。本仓库代码不包含任何游戏本体程序、ROM 或破解内容；若需公开发布，请严格遵守所在地区的著作权法律法规，切勿将受版权保护的美术或原始数据用于商业用途或违规再分发。
-3. **算法基线与第三方致谢**：《万缕千丝》乱数种子反推与成长预测算法移植自已获原作者（`@kskdmcph58-lgtm`）个人使用许可的 [FE_Rigging_Buddy](https://github.com/kskdmcph58-lgtm/FE_Rigging_Buddy)（锁定提交 `016f048b5c636035ac0b56b0c4b9d89a742fba4a`）。该许可仅覆盖个人使用目的，不构成更广泛的再分发授权；同时当前获准移植基线按「凯伊篇」与「其它路线」区分规则，界面保留四线入口并如实标注适用范围。详见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
-4. **数值与规划仅供参考**：应用内的图鉴数据、机制公式、乱数预测、期望成长及固定成长推算均基于既有社区公开研究与特定版本实测整理，不保证在游戏后续官方补丁更新后始终 100% 一致；因游戏版本变动、录入误差、OCR 误识别或 AI 回复偏差导致的养成结果差异，请以游戏内实际显示为准，建议导入重要规划前核对确认并妥善做好游戏存档备份。
-5. **AI 接口与隐私责任（BYOK）**：应用本身不提供、不代理、不内置任何商业大模型服务或免费额度。对话参谋所需的 API Key 与接口地址均由用户自行配置并仅使用 `AndroidKeyStore` 加密存储于本机，由此产生的第三方 API 调用费用、速率限制、内容合规性与服务商隐私条款均由用户自行承担并遵守对应服务商协议。
-6. **无担保声明（AS-IS）**：本项目按「现状（AS-IS）」提供，不附带任何明示或暗示的适销性、特定用途适用性或不侵权担保。因使用本软件（包括但不限于本地存储、加密备份口令遗忘、第三方 WebDAV 服务异常等）造成的任何直接或间接数据损失，开发者不承担赔偿责任；请务必牢记加密备份口令并定期多处备份个人数据。
+### 游戏资料与算法参考来源
+
+| 作品 / 模块 | 来源名称 | 网址 / 仓库 | 用途说明 |
+| :--- | :--- | :--- | :--- |
+| **《万缕千丝》图鉴与攻略** | 《火焰之纹章 万紫千红》社区在线数据表 | https://docs.qq.com/sheet/DV0N0VUZLSXRmUWFq?tab=lnafol | 角色、职业、血印、特技、战技、魔法、武器、饰品、道具、外传、支线、坐骑、军团、礼物、料理、时间轴、挑战书等图鉴数据 |
+| **《万缕千丝》地图与专题** | fireemblem.top | https://fireemblem.top/ | 世界地图地形与路网点位（`/api/world-map`）、结局后日谈（`/topics/endings`）、种植（`/database/planting`）、支援（`/archive/supports`）、系统机制与成长公式（`/archive/mechanics`、`/topics/growth-mechanics`）、成长模拟参考（`/tools/growth-simulator`） |
+| **《万缕千丝》逗鸟问答** | KeenGamer / RaiderKing（经社区在线表校对） | https://www.keengamer.com/ · https://raiderking.com/ | Perfect Bird Time 全角色逗鸟问答参考 |
+| **《万缕千丝》乱数算法参考** | FE_Rigging_Buddy | https://github.com/kskdmcph58-lgtm/FE_Rigging_Buddy | 乱数种子反推、成长预测规则基线（参考提交 `016f048b5c636035ac0b56b0c4b9d89a742fba4a`）与角色头像索引；当前规则基线按「凯伊篇」与「其它路线」区分 |
+| **《风花雪月》基础图鉴** | Fire Emblem Wiki (fireemblemwiki.org) | https://fireemblemwiki.org/ | 角色、职业、初始属性与成长率、技能、战技、魔法、武器、道具、纹章、骑士团、章节、支援、礼物、餐厅与茶会数据 |
+| **《风花雪月》部分素材** | Fire Emblem Wiki (Fandom) | https://fireemblem.fandom.com/ | 部分角色立绘与图标素材 |
+| **《风花雪月》数值交叉核对** | Serenes Forest | https://serenesforest.net/three-houses/ | 职业成长率与骑士团数值交叉参考 |
+| **《风花雪月》中文支援文本** | Fedatamine | https://houses.fedatamine.com/zh-cn/supports/ | 简体中文支援对话数据 |
+| **《风花雪月》中文译名对照** | 萌娘百科 (Moegirlpedia) | https://zh.moegirl.org.cn/火焰之纹章_风花雪月 | 部分角色与词条简体中文译名对照 |
+| **《Engage》核心资料** | 《火焰之纹章 ENGAGE结合》社区在线数据表 | 社区整理 Excel 表格 | 角色、职业基础值/成长率/上限、纹章士、牵绊戒指、特技、武器装备、索拉涅尔活动与成就资料 |
+| **《Engage》章节与图标** | Fire Emblem Wiki (fireemblemwiki.org) | https://fireemblemwiki.org/wiki/List_of_chapters_in_Fire_Emblem_Engage | 章节索引与部分图标资源 |
+
+### 端侧模型与开源依赖
+
+- **端侧中文 OCR 模型**：**RapidOCR / PaddleOCR PP-OCRv4（Mobile ONNX）**，由用户按需从公开仓库下载，不随 APK 预装：
+  - ModelScope：https://www.modelscope.cn/models/RapidAI/RapidOCR
+  - Hugging Face：https://huggingface.co/RapidAI/RapidOCR （镜像：https://hf-mirror.com/RapidAI/RapidOCR ）
+- **核心开源库**：Jetpack Compose & Material 3 · [ONNX Runtime Android](https://github.com/microsoft/onnxruntime) · [OkHttp](https://github.com/square/okhttp) · [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java) · Kotlinx Serialization & Coroutines。
+
+---
+
+## 免责声明
+
+请在使用、构建或参考本项目前仔细阅读以下声明：
+
+1. **非官方个人伴侣工具**：本项目为个人学习、研究与游玩辅助用途开发的非商业、非官方工具，与 **Nintendo（任天堂）**、**Intelligent Systems** 或任何游戏发行方、资料站点无任何隶属、合作或官方背书关系。
+2. **知识产权与侵权联系**：《火焰纹章（Fire Emblem）》系列名称、角色设定、数值、图标、立绘、世界地图、游戏文本及各社区攻略站整理内容的相关权益均归其原版权方与原始作者/社区贡献者所有。本仓库不包含游戏本体程序、ROM 或破解内容，且严禁用于任何商业用途。**如任何版权方、网站或作者认为本项目引用的资料、链接或预制资源包侵犯了您的合法权益，请通过 GitHub Issue 联系，我们将在核实后第一时间删除相关内容。**
+3. **数值与规划仅供参考**：应用内的图鉴数据、机制公式、乱数预测、期望成长及固定成长推算均基于社区公开资料与特定版本实测整理，不保证在游戏后续官方补丁更新后始终 100% 一致；因版本变动、录入误差、OCR 误识别或 AI 回复偏差导致的养成结果差异，请以游戏内实际显示为准，建议导入重要规划前核对确认并做好存档备份。
+4. **AI 接口与隐私责任（BYOK）**：应用本身不提供、不代理、不内置任何商业大模型服务或免费额度。对话参谋所需的 API Key 与接口地址均由用户自行配置并仅使用 `AndroidKeyStore` 加密存储于本机，由此产生的第三方 API 调用费用、速率限制、内容合规性与服务商隐私条款均由用户自行承担并遵守对应服务商协议。
+5. **无担保声明（AS-IS）**：本项目按「现状（AS-IS）」提供，不附带任何明示或暗示的适销性、特定用途适用性或不侵权担保。因使用本软件（包括但不限于本地存储、加密备份口令遗忘、第三方 WebDAV 服务异常等）造成的任何直接或间接数据损失，开发者不承担赔偿责任；请妥善保管加密备份口令并定期备份个人数据。
