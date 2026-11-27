@@ -145,7 +145,8 @@ jobs:
         run: |
           set -euo pipefail
           KEYSTORE_FILE="${RUNNER_TEMP}/release.keystore"
-          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | tr -d '\r\n\t ' | base64 --decode > "${KEYSTORE_FILE}"
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | sed '/^-----/d' | tr -d '\r\n\t ' | base64 --decode > "${KEYSTORE_FILE}"
+          test -s "${KEYSTORE_FILE}"
           echo "ANDROID_KEYSTORE_PATH=${KEYSTORE_FILE}" >> "${GITHUB_ENV}"
 
       - name: Run unit tests, lint, and assemble APK
