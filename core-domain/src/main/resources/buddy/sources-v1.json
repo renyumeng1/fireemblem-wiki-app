@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "revision": "016f048b5c636035ac0b56b0c4b9d89a742fba4a",
+  "sha256": "d44de84918c3953060b1702526fef34abfb39176147d5ae842c3d9a15ead30d1",
+  "sources": {
+    "data/seed-game.json": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/data/seed-game.json",
+      "sha256": "3f18aaed1217726e64f22623653fa19f68d88e0537485310c974bfcf0d71d32d"
+    },
+    "characters.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/characters.js",
+      "sha256": "b7a2e3f0a600835123e3569077e1437687e7cfe13b01b2e483213790714c95ad"
+    },
+    "data/professions.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/data/professions.js",
+      "sha256": "5318f46a0678fb08888ceb3f1c5ca430639376400a828dbd840b143d19c69788"
+    },
+    "data/class-rules.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/data/class-rules.js",
+      "sha256": "b082f95aad054e1f24970357539d80c7ee0c4137e874486006df7a5996ec5dc8"
+    },
+    "model.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/model.js",
+      "sha256": "0de9fcf23881b0652f10a0b58256d1d81368922339ae50924c0e8bef4e2f6449"
+    },
+    "core/actions.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/core/actions.js",
+      "sha256": "a8a4c8f6abbd7719b8704ee539045d6028ae4307d900ee4b6cd5af931e05fb92"
+    },
+    "core/seed.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/core/seed.js",
+      "sha256": "fa75e4418a077e069c01514d00e9494c6789f5a2acf152416847500d8e6a8c69"
+    },
+    "core/seed-engine.js": {
+      "url": "https://raw.githubusercontent.com/kskdmcph58-lgtm/FE_Rigging_Buddy/016f048b5c636035ac0b56b0c4b9d89a742fba4a/core/seed-engine.js",
+      "sha256": "0c0f2103710b8923206bf6d30efd5af8b68199239d234b3826cb57d503615ed3"
+    }
+  },
+  "unresolvedCharacters": [
+    "c065",
+    "c068",
+    "c069",
+    "c070"
+  ],
+  "counts": {
+    "people": 74,
+    "professions": 64,
+    "assignableRides": 20,
+    "differentialCases": 1032,
+    "forecastCases": 12
+  }
+}

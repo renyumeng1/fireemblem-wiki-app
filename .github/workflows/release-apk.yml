@@ -1,0 +1,257 @@
+name: Build and Release Android APK
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    name: Test, Lint, Build APK & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout pure-source repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Android SDK (API 37)
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK Platform 37 & Build-Tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager --install "build-tools;37.0.0" "platform-tools"
+          sdkmanager --install "platforms;android-37.0" || sdkmanager --install "platforms;android-37"
+
+      - name: Prepare prebuilt offline assets pack (Strategy B)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSETS_PACK_URL: ${{ secrets.ASSETS_PACK_URL }}
+          ASSETS_PACK_SHA256: ${{ secrets.ASSETS_PACK_SHA256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACK_DIR="${RUNNER_TEMP}/assets-download"
+          EXTRACT_DIR="${RUNNER_TEMP}/prebuilt-assets"
+          mkdir -p "${PACK_DIR}" "${EXTRACT_DIR}"
+
+          if [[ -n "${ASSETS_PACK_URL:-}" ]]; then
+            echo "Downloading offline assets pack from custom ASSETS_PACK_URL..."
+            curl -fL --retry 3 --retry-delay 5 -o "${PACK_DIR}/offline-assets-pack.zip" "${ASSETS_PACK_URL}"
+            if [[ -n "${ASSETS_PACK_SHA256:-}" ]]; then
+              echo "${ASSETS_PACK_SHA256}  ${PACK_DIR}/offline-assets-pack.zip" | sha256sum -c -
+            fi
+          else
+            if ! gh release view assets-v1 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              echo "Release assets-v1 not found; checking bootstrap branch assets-pack..."
+              if git ls-remote --exit-code --heads origin assets-pack >/dev/null 2>&1; then
+                git fetch origin assets-pack:refs/remotes/origin/assets-pack --depth=1
+                git show origin/assets-pack:offline-assets-pack.zip > "${PACK_DIR}/offline-assets-pack.zip"
+                git show origin/assets-pack:offline-assets-pack.sha256 > "${PACK_DIR}/offline-assets-pack.sha256"
+                (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+                gh release create assets-v1 \
+                  "${PACK_DIR}/offline-assets-pack.zip" \
+                  "${PACK_DIR}/offline-assets-pack.sha256" \
+                  --repo "${GITHUB_REPOSITORY}" \
+                  --target main \
+                  --prerelease \
+                  --title "Offline Assets Pack (v1)" \
+                  --notes "Prebuilt offline SQLite databases, world map, and WebP assets for CI APK builds. Main Git branch remains pure source code."
+                echo "Cleaning up temporary bootstrap branch assets-pack..."
+                git push origin --delete assets-pack || true
+              else
+                echo "::error::Missing offline assets! Upload offline-assets-pack.zip to release 'assets-v1' or set secret ASSETS_PACK_URL."
+                exit 1
+              fi
+            else
+              echo "Downloading offline assets pack from release assets-v1..."
+              gh release download assets-v1 \
+                --repo "${GITHUB_REPOSITORY}" \
+                --dir "${PACK_DIR}" \
+                --pattern "offline-assets-pack.*"
+              if [[ -f "${PACK_DIR}/offline-assets-pack.sha256" ]]; then
+                (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+              fi
+            fi
+          fi
+
+          unzip -q "${PACK_DIR}/offline-assets-pack.zip" -d "${EXTRACT_DIR}"
+          echo "PREBUILT_ASSETS_DIR=${EXTRACT_DIR}" >> "${GITHUB_ENV}"
+          ls -la "${EXTRACT_DIR}" "${EXTRACT_DIR}/wiki" "${EXTRACT_DIR}/world-map" "${EXTRACT_DIR}/games"
+
+      - name: Determine release version & signing mode
+        id: meta
+        env:
+          HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            RELEASE_TAG="${GITHUB_REF_NAME}"
+            VERSION_NAME="${GITHUB_REF_NAME#v}"
+            IS_TAG="true"
+          else
+            RELEASE_TAG="latest"
+            VERSION_NAME="0.2.0-${SHORT_SHA}"
+            IS_TAG="false"
+          fi
+          VERSION_CODE="$(( 100 + GITHUB_RUN_NUMBER ))"
+          if [[ "${HAS_KEYSTORE}" == "true" ]]; then
+            BUILD_VARIANT="release"
+          else
+            BUILD_VARIANT="debug"
+          fi
+          echo "release_tag=${RELEASE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "version_name=${VERSION_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "version_code=${VERSION_CODE}" >> "${GITHUB_OUTPUT}"
+          echo "build_variant=${BUILD_VARIANT}" >> "${GITHUB_OUTPUT}"
+          echo "short_sha=${SHORT_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "is_tag=${IS_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved tag=${RELEASE_TAG}, version=${VERSION_NAME} (${VERSION_CODE}), variant=${BUILD_VARIANT}"
+
+      - name: Decode release keystore (if configured)
+        if: steps.meta.outputs.build_variant == 'release'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE_FILE="${RUNNER_TEMP}/release.keystore"
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_FILE}"
+          echo "ANDROID_KEYSTORE_PATH=${KEYSTORE_FILE}" >> "${GITHUB_ENV}"
+
+      - name: Run unit tests, lint, and assemble APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x ./gradlew
+          if [[ "${{ steps.meta.outputs.build_variant }}" == "release" ]]; then
+            TASK=":android-app:assembleRelease"
+          else
+            TASK=":android-app:assembleDebug"
+          fi
+          ./gradlew \
+            :core-domain:test \
+            :android-app:lintDebug \
+            "${TASK}" \
+            -PprebuiltAssetsDir="${PREBUILT_ASSETS_DIR}" \
+            -PversionNameOverride="${{ steps.meta.outputs.version_name }}" \
+            -PversionCodeOverride="${{ steps.meta.outputs.version_code }}" \
+            --no-daemon --stacktrace
+
+      - name: Package release artifacts & SHA-256 checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          VARIANT="${{ steps.meta.outputs.build_variant }}"
+          VERSION="${{ steps.meta.outputs.version_name }}"
+          if [[ "${VARIANT}" == "release" ]]; then
+            SRC_APK="android-app/build/outputs/apk/release/android-app-release.apk"
+          else
+            SRC_APK="android-app/build/outputs/apk/debug/android-app-debug.apk"
+          fi
+          OUT_APK="dist/fireemblem-companion-${VERSION}-${VARIANT}.apk"
+          cp "${SRC_APK}" "${OUT_APK}"
+          (cd dist && sha256sum "$(basename "${OUT_APK}")" > SHA256SUMS.txt)
+          ls -lh dist
+          cat dist/SHA256SUMS.txt
+
+      - name: Publish APK to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.release_tag }}"
+          VERSION="${{ steps.meta.outputs.version_name }}"
+          VARIANT="${{ steps.meta.outputs.build_variant }}"
+          SHORT_SHA="${{ steps.meta.outputs.short_sha }}"
+          APK_FILE="dist/fireemblem-companion-${VERSION}-${VARIANT}.apk"
+          SUM_FILE="dist/SHA256SUMS.txt"
+
+          NOTES_FILE="${RUNNER_TEMP}/release-notes.md"
+          {
+            echo "## Fire Emblem Companion (${VERSION})"
+            echo ""
+            echo "- **构建类型**：\`${VARIANT}\`（可直接覆盖安装至 Android 8.0+ 手机/平板，保留本地个人数据）"
+            echo "- **提交哈希**：\`${SHORT_SHA}\`"
+            echo "- **包含验证**：\`:core-domain:test\` 单元测试通过 + \`:android-app:lintDebug\` 静态检查通过"
+            echo "- **内置离线资料包**：《万缕千丝》/《风花雪月》/《Engage》三作 SQLite + 世界地图 + 本地 WebP 立绘"
+            echo ""
+            echo "### SHA-256 校验"
+            echo '```text'
+            cat "${SUM_FILE}"
+            echo '```'
+          } > "${NOTES_FILE}"
+
+          if [[ "${TAG}" == "latest" ]]; then
+            # Move rolling 'latest' tag to current commit cleanly
+            git tag -f latest "${GITHUB_SHA}"
+            git push -f origin refs/tags/latest
+            if gh release view latest --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              # Remove stale APK assets before uploading the new build
+              OLD_ASSETS=$(gh release view latest --repo "${GITHUB_REPOSITORY}" --json assets --jq '.assets[].name' || true)
+              for asset in ${OLD_ASSETS}; do
+                gh release delete-asset latest "${asset}" --repo "${GITHUB_REPOSITORY}" --yes || true
+              done
+              gh release edit latest \
+                --repo "${GITHUB_REPOSITORY}" \
+                --title "Fire Emblem Companion · Latest (${VERSION})" \
+                --notes-file "${NOTES_FILE}" \
+                --latest
+              gh release upload latest "${APK_FILE}" "${SUM_FILE}" --repo "${GITHUB_REPOSITORY}" --clobber
+            else
+              gh release create latest "${APK_FILE}" "${SUM_FILE}" \
+                --repo "${GITHUB_REPOSITORY}" \
+                --title "Fire Emblem Companion · Latest (${VERSION})" \
+                --notes-file "${NOTES_FILE}" \
+                --latest
+            fi
+          else
+            if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              gh release edit "${TAG}" \
+                --repo "${GITHUB_REPOSITORY}" \
+                --title "Fire Emblem Companion ${TAG}" \
+                --notes-file "${NOTES_FILE}" \
+                --latest
+              gh release upload "${TAG}" "${APK_FILE}" "${SUM_FILE}" --repo "${GITHUB_REPOSITORY}" --clobber
+            else
+              gh release create "${TAG}" "${APK_FILE}" "${SUM_FILE}" \
+                --repo "${GITHUB_REPOSITORY}" \
+                --title "Fire Emblem Companion ${TAG}" \
+                --notes-file "${NOTES_FILE}" \
+                --latest
+            fi
+          fi
+
+      - name: Clean up temporary keystore
+        if: always()
+        shell: bash
+        run: rm -f "${RUNNER_TEMP}/release.keystore"

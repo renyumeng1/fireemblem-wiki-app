@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Faith / White Magic / Staff radiant emblem -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,3.5 V20.5 M5.5,10 H18.5 M12,7.2 A2.8,2.8 0 1,1 11.99,7.2 Z"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeWidth="1.7" />
+</vector>

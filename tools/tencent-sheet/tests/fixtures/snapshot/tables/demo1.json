@@ -1,0 +1,64 @@
+{
+  "sheet_id": "demo1",
+  "name": "Sample Sheet",
+  "hidden": false,
+  "row_count": 3,
+  "column_count": 4,
+  "revision": 9,
+  "retrieved_at": "2026-11-16T00:00:00+00:00",
+  "coordinates": "one-based",
+  "stored_cell_count": 4,
+  "source_cell_count_including_format_only": 4,
+  "formula_values": "source-cached; original calculation models preserved per cell",
+  "merges": [
+    {
+      "gridRangeData": {
+        "sheetId": "demo1",
+        "startRowIndex": 0,
+        "startColIndex": 0,
+        "endRowIndex": 2,
+        "endColIndex": 1
+      }
+    }
+  ],
+  "cells": [
+    {
+      "row": 1,
+      "column": 1,
+      "address": "A1",
+      "type": "string",
+      "value": "text",
+      "$unknown_fields": {"field": [1, 2]}
+    },
+    {
+      "row": 1,
+      "column": 2,
+      "address": "B1",
+      "type": "formula",
+      "value": 12,
+      "formula": {"calculation": {"formulaModel": {"expression": "=SUM(A1)"}}}
+    },
+    {
+      "row": 2,
+      "column": 1,
+      "address": "A2",
+      "type": "rich_text",
+      "value": "rich value",
+      "rich_text": {"r": [{"t": "rich", "type": 3}, {"t": " value", "type": 3}]}
+    },
+    {
+      "row": 3,
+      "column": 4,
+      "address": "D3",
+      "type": "string",
+      "value": " ",
+      "extension": {"type": 5, "value": "image-reference"},
+      "image": {
+        "url": "https://docimg.example/image.png",
+        "local_file": "assets/picture.png",
+        "width": 1,
+        "height": 1
+      }
+    }
+  ]
+}

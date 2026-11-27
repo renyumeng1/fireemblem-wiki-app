@@ -1,0 +1,12 @@
+[
+  {
+    "url": "https://docimg.example/image.png",
+    "sheet_ids": ["demo1"],
+    "status": "downloaded",
+    "file": "assets/picture.png",
+    "bytes": 12,
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "dimensions": [1, 1],
+    "format": "PNG"
+  }
+]

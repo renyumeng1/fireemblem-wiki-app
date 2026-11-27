@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext at OS transport layer only so user-configured local LAN LLM gateways
+         (192.168.x.x / 10.x.x.x / 172.16-31.x.x / localhost) can connect.
+         Application-level validators in SecureAgentSettings, LlmAgentClients, and WebDavRemote
+         strictly enforce HTTPS for all public Internet endpoints. -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

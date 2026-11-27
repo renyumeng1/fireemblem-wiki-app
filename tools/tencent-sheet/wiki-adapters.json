@@ -1,0 +1,1718 @@
+{
+  "schema_version": 1,
+  "categories": [
+    {
+      "id": "characters",
+      "title": "角色",
+      "description": "加入条件、成长与初始能力",
+      "sheet": "sd3o0k",
+      "header_row": 2,
+      "header": "角色名称",
+      "first_row": 4,
+      "title_column": 4,
+      "image_column": 3,
+      "subtitle_columns": [
+        2,
+        5
+      ],
+      "fields": [
+        {
+          "key": "affiliation",
+          "label": "所属势力",
+          "column": 2,
+          "numeric": false
+        },
+        {
+          "key": "initial_profession",
+          "label": "初始兵种",
+          "column": 5,
+          "numeric": false,
+          "references": [
+            "professions"
+          ]
+        },
+        {
+          "key": "gender",
+          "label": "性别",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "personal_skill_icon",
+          "label": "个人特技图标",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "personal_skill",
+          "label": "个人特技",
+          "column": 8,
+          "numeric": false,
+          "references": [
+            "skills"
+          ]
+        },
+        {
+          "key": "skill_effect",
+          "label": "特技效果",
+          "column": 9,
+          "numeric": false
+        },
+        {
+          "key": "level_skill_icon",
+          "label": "等级特技图标",
+          "column": 10,
+          "numeric": false
+        },
+        {
+          "key": "level_skill",
+          "label": "等级特技",
+          "column": 11,
+          "numeric": false,
+          "references": [
+            "skills"
+          ]
+        },
+        {
+          "key": "level_skill_effect",
+          "label": "等级特技效果",
+          "column": 12,
+          "numeric": false
+        },
+        {
+          "key": "crest_icon",
+          "label": "血印图标",
+          "column": 14,
+          "numeric": false
+        },
+        {
+          "key": "crest",
+          "label": "血印",
+          "column": 15,
+          "numeric": false,
+          "references": [
+            "crests"
+          ]
+        },
+        {
+          "key": "earliest_chapter",
+          "label": "最早加入章节",
+          "column": 17,
+          "numeric": false
+        },
+        {
+          "key": "recruitment_condition",
+          "label": "加入条件",
+          "column": 18,
+          "numeric": false
+        },
+        {
+          "key": "poach_condition",
+          "label": "挖角条件",
+          "column": 19,
+          "numeric": false
+        },
+        {
+          "key": "growth_hp",
+          "label": "HP成长率",
+          "column": 20,
+          "numeric": true
+        },
+        {
+          "key": "growth_strength",
+          "label": "力量成长率",
+          "column": 21,
+          "numeric": true
+        },
+        {
+          "key": "growth_magic",
+          "label": "魔力成长率",
+          "column": 22,
+          "numeric": true
+        },
+        {
+          "key": "growth_speed",
+          "label": "速度成长率",
+          "column": 23,
+          "numeric": true
+        },
+        {
+          "key": "growth_dexterity",
+          "label": "技巧成长率",
+          "column": 24,
+          "numeric": true
+        },
+        {
+          "key": "growth_defense",
+          "label": "防守成长率",
+          "column": 25,
+          "numeric": true
+        },
+        {
+          "key": "growth_resistance",
+          "label": "魔防成长率",
+          "column": 26,
+          "numeric": true
+        },
+        {
+          "key": "growth_luck",
+          "label": "幸运成长率",
+          "column": 27,
+          "numeric": true
+        },
+        {
+          "key": "growth_charm",
+          "label": "魅力成长率",
+          "column": 28,
+          "numeric": true
+        },
+        {
+          "key": "initial_level",
+          "label": "初始等级",
+          "column": 30,
+          "numeric": true
+        },
+        {
+          "key": "initial_hp",
+          "label": "初始HP",
+          "column": 31,
+          "numeric": true
+        },
+        {
+          "key": "initial_strength",
+          "label": "初始力量",
+          "column": 32,
+          "numeric": true
+        },
+        {
+          "key": "initial_magic",
+          "label": "初始魔力",
+          "column": 33,
+          "numeric": true
+        },
+        {
+          "key": "initial_speed",
+          "label": "初始速度",
+          "column": 34,
+          "numeric": true
+        },
+        {
+          "key": "initial_dexterity",
+          "label": "初始技巧",
+          "column": 35,
+          "numeric": true
+        },
+        {
+          "key": "initial_defense",
+          "label": "初始防守",
+          "column": 36,
+          "numeric": true
+        },
+        {
+          "key": "initial_resistance",
+          "label": "初始魔防",
+          "column": 37,
+          "numeric": true
+        },
+        {
+          "key": "initial_luck",
+          "label": "初始幸运",
+          "column": 38,
+          "numeric": true
+        },
+        {
+          "key": "initial_charm",
+          "label": "初始魅力",
+          "column": 39,
+          "numeric": true
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "professions",
+      "title": "职业",
+      "description": "兵种成长修正、能力补正与精通",
+      "sheet": "lnafol",
+      "header_row": 2,
+      "header": "兵种名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [
+        4
+      ],
+      "fields": [
+        {
+          "key": "tier",
+          "label": "职业级别",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "exam_requirement",
+          "label": "考试要求",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "skill_experience_bonus",
+          "label": "技能经验加成",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "movement",
+          "label": "移动力",
+          "column": 7,
+          "numeric": true
+        },
+        {
+          "key": "growth_hp",
+          "label": "HP成长修正",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "growth_strength",
+          "label": "力量成长修正",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "growth_magic",
+          "label": "魔力成长修正",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "growth_speed",
+          "label": "速度成长修正",
+          "column": 11,
+          "numeric": true
+        },
+        {
+          "key": "growth_dexterity",
+          "label": "技巧成长修正",
+          "column": 12,
+          "numeric": true
+        },
+        {
+          "key": "growth_defense",
+          "label": "防守成长修正",
+          "column": 13,
+          "numeric": true
+        },
+        {
+          "key": "growth_resistance",
+          "label": "魔防成长修正",
+          "column": 14,
+          "numeric": true
+        },
+        {
+          "key": "growth_luck",
+          "label": "幸运成长修正",
+          "column": 15,
+          "numeric": true
+        },
+        {
+          "key": "growth_charm",
+          "label": "魅力成长修正",
+          "column": 16,
+          "numeric": true
+        },
+        {
+          "key": "base_hp",
+          "label": "基础HP",
+          "column": 18,
+          "numeric": true
+        },
+        {
+          "key": "base_strength",
+          "label": "基础力量",
+          "column": 19,
+          "numeric": true
+        },
+        {
+          "key": "base_magic",
+          "label": "基础魔力",
+          "column": 20,
+          "numeric": true
+        },
+        {
+          "key": "base_speed",
+          "label": "基础速度",
+          "column": 21,
+          "numeric": true
+        },
+        {
+          "key": "base_dexterity",
+          "label": "基础技巧",
+          "column": 22,
+          "numeric": true
+        },
+        {
+          "key": "base_defense",
+          "label": "基础防守",
+          "column": 23,
+          "numeric": true
+        },
+        {
+          "key": "base_resistance",
+          "label": "基础魔防",
+          "column": 24,
+          "numeric": true
+        },
+        {
+          "key": "base_luck",
+          "label": "基础幸运",
+          "column": 25,
+          "numeric": true
+        },
+        {
+          "key": "base_charm",
+          "label": "基础魅力",
+          "column": 26,
+          "numeric": true
+        },
+        {
+          "key": "traits",
+          "label": "兵种特性",
+          "column": 28,
+          "numeric": false
+        },
+        {
+          "key": "innate_skills",
+          "label": "固有特技",
+          "column": 29,
+          "numeric": false,
+          "references": [
+            "skills"
+          ],
+          "reference_syntax": "skills"
+        },
+        {
+          "key": "mastery_experience",
+          "label": "精通所需经验",
+          "column": 32,
+          "numeric": true
+        },
+        {
+          "key": "mastery_skill",
+          "label": "精通特技",
+          "column": 33,
+          "numeric": false,
+          "references": [
+            "skills"
+          ],
+          "reference_syntax": "skills"
+        }
+      ],
+      "identity_columns": [
+        4
+      ]
+    },
+    {
+      "id": "crests",
+      "title": "血印",
+      "description": "血印效果、持有者与对应纹章",
+      "sheet": "0x9327",
+      "header_row": 2,
+      "header": "血印名称",
+      "first_row": 4,
+      "title_column": 4,
+      "image_column": 3,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "number",
+          "label": "编号",
+          "column": 2,
+          "numeric": false
+        },
+        {
+          "key": "effect",
+          "label": "血印效果",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "holders",
+          "label": "持有者",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "emblem",
+          "label": "对应纹章",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "emblem_description",
+          "label": "纹章描述",
+          "column": 8,
+          "numeric": false
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "skills",
+      "title": "特技",
+      "description": "特技效果与习得条件",
+      "sheet": "hbns9r",
+      "header_row": 2,
+      "header": "特技名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "effect",
+          "label": "特技效果",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "learning_condition",
+          "label": "习得条件",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "notes",
+          "label": "备注",
+          "column": 7,
+          "numeric": false
+        }
+      ],
+      "identity_columns": [
+        5
+      ]
+    },
+    {
+      "id": "combat-arts",
+      "title": "战技",
+      "description": "消耗、威力、命中与习得条件",
+      "sheet": "qgu8m4",
+      "header_row": 2,
+      "header": "战技名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "weapon_type",
+          "label": "使用武器",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "战技描述",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "durability_cost",
+          "label": "耐久消耗",
+          "column": 6,
+          "numeric": true
+        },
+        {
+          "key": "might",
+          "label": "威力",
+          "column": 7,
+          "numeric": true
+        },
+        {
+          "key": "hit",
+          "label": "命中",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "critical",
+          "label": "必杀",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "avoid",
+          "label": "回避",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "critical_avoid",
+          "label": "必避",
+          "column": 11,
+          "numeric": true
+        },
+        {
+          "key": "effectiveness",
+          "label": "有效",
+          "column": 12,
+          "numeric": false
+        },
+        {
+          "key": "effective_against",
+          "label": "特效",
+          "column": 13,
+          "numeric": false
+        },
+        {
+          "key": "range",
+          "label": "射程",
+          "column": 14,
+          "numeric": false
+        },
+        {
+          "key": "learning_condition",
+          "label": "习得条件",
+          "column": 15,
+          "numeric": false
+        },
+        {
+          "key": "notes",
+          "label": "备注",
+          "column": 17,
+          "numeric": false
+        }
+      ],
+      "identity_columns": [
+        15
+      ]
+    },
+    {
+      "id": "magic",
+      "title": "魔法",
+      "description": "魔法效果、属性与习得条件",
+      "sheet": "14hhhl",
+      "header_row": 2,
+      "header": "魔法名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "magic_type",
+          "label": "魔术类型",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "魔法描述",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "uses",
+          "label": "使用次数",
+          "column": 6,
+          "numeric": true
+        },
+        {
+          "key": "might_or_healing",
+          "label": "威力/愈力",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "hit",
+          "label": "命中",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "critical",
+          "label": "必杀",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "avoid",
+          "label": "回避",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "weight",
+          "label": "重量",
+          "column": 11,
+          "numeric": true
+        },
+        {
+          "key": "effectiveness",
+          "label": "有效",
+          "column": 12,
+          "numeric": false
+        },
+        {
+          "key": "effective_against",
+          "label": "特效",
+          "column": 13,
+          "numeric": false
+        },
+        {
+          "key": "range",
+          "label": "射程",
+          "column": 14,
+          "numeric": false
+        },
+        {
+          "key": "learning_condition",
+          "label": "习得条件",
+          "column": 15,
+          "numeric": false
+        },
+        {
+          "key": "notes",
+          "label": "备注",
+          "column": 17,
+          "numeric": false
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "weapons",
+      "title": "武器",
+      "description": "武器属性、获取方式与修理材料",
+      "sheet": "twr89r",
+      "header_row": 2,
+      "header": "武器名称",
+      "first_row": 4,
+      "title_column": 4,
+      "image_column": 3,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "weapon_type",
+          "label": "武器类型",
+          "column": 2,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "详细说明",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "rank",
+          "label": "等级",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "might",
+          "label": "威力",
+          "column": 7,
+          "numeric": true
+        },
+        {
+          "key": "hit",
+          "label": "命中",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "critical",
+          "label": "必杀",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "avoid",
+          "label": "回避",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "range",
+          "label": "射程",
+          "column": 11,
+          "numeric": false
+        },
+        {
+          "key": "weight",
+          "label": "重量",
+          "column": 12,
+          "numeric": true
+        },
+        {
+          "key": "effectiveness",
+          "label": "有效",
+          "column": 13,
+          "numeric": false
+        },
+        {
+          "key": "effective_against",
+          "label": "特效",
+          "column": 14,
+          "numeric": false
+        },
+        {
+          "key": "durability",
+          "label": "耐久",
+          "column": 15,
+          "numeric": false
+        },
+        {
+          "key": "acquisition",
+          "label": "获取方法",
+          "column": 16,
+          "numeric": false,
+          "references": [
+            "weapons",
+            "items"
+          ],
+          "reference_syntax": "forge"
+        },
+        {
+          "key": "repair_materials",
+          "label": "修理材料",
+          "column": 17,
+          "numeric": false,
+          "references": [
+            "items"
+          ],
+          "quantity_reference": true,
+          "reference_syntax": "materials"
+        }
+      ],
+      "identity_columns": [],
+      "last_row": 487
+    },
+    {
+      "id": "accessories",
+      "title": "防具与饰品",
+      "description": "装备效果、重量与获取方式",
+      "sheet": "twr89r",
+      "header_row": 488,
+      "header": "装备品名称",
+      "first_row": 490,
+      "title_column": 4,
+      "image_column": 3,
+      "subtitle_columns": [
+        2
+      ],
+      "identity_columns": [],
+      "fields": [
+        {
+          "key": "equipment_type",
+          "label": "装备类型",
+          "column": 2,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "详细说明",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "additional_effects",
+          "label": "其他效果",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "weight",
+          "label": "重量",
+          "column": 15,
+          "numeric": true
+        },
+        {
+          "key": "acquisition",
+          "label": "获取方法",
+          "column": 16,
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "id": "items",
+      "title": "道具与材料",
+      "description": "效果、价格、获取方法与地图位置",
+      "sheet": "vbvhs5",
+      "header_row": 2,
+      "header": "物品名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "durability_or_taste",
+          "label": "耐久/口味",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "purchase_price",
+          "label": "购买价格",
+          "column": 5,
+          "numeric": true
+        },
+        {
+          "key": "sale_price",
+          "label": "出售价格",
+          "column": 6,
+          "numeric": true
+        },
+        {
+          "key": "description",
+          "label": "详细说明",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "acquisition",
+          "label": "获得方法",
+          "column": 8,
+          "numeric": false
+        },
+        {
+          "key": "map_reference",
+          "label": "地图参考",
+          "column": 10,
+          "numeric": false
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "paralogues",
+      "title": "外传",
+      "description": "触发章节、路线期限与奖励",
+      "sheet": "6bb00l",
+      "header_row": 2,
+      "header": "外传章节",
+      "first_row": 5,
+      "title_column": 3,
+      "image_column": 4,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "related_characters",
+          "label": "相关角色",
+          "column": 5,
+          "numeric": false,
+          "references": [
+            "characters"
+          ]
+        },
+        {
+          "key": "kai_available",
+          "label": "凯篇接取期限",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "kai_deadline",
+          "label": "凯篇截止期限",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "dietrich_available",
+          "label": "迪篇接取期限",
+          "column": 8,
+          "numeric": false
+        },
+        {
+          "key": "dietrich_deadline",
+          "label": "迪篇截止期限",
+          "column": 9,
+          "numeric": false
+        },
+        {
+          "key": "theodora_available",
+          "label": "赛篇接取期限",
+          "column": 10,
+          "numeric": false
+        },
+        {
+          "key": "theodora_deadline",
+          "label": "赛篇截止期限",
+          "column": 11,
+          "numeric": false
+        },
+        {
+          "key": "leda_available",
+          "label": "蕾篇接取期限",
+          "column": 12,
+          "numeric": false
+        },
+        {
+          "key": "leda_deadline",
+          "label": "蕾篇截止期限",
+          "column": 13,
+          "numeric": false
+        },
+        {
+          "key": "timing",
+          "label": "触发时期",
+          "column": 14,
+          "numeric": false
+        },
+        {
+          "key": "condition_and_special_rewards",
+          "label": "触发条件与特殊奖励",
+          "column": 15,
+          "numeric": false
+        },
+        {
+          "key": "rewards",
+          "label": "报酬奖励",
+          "column": 16,
+          "numeric": false
+        },
+        {
+          "key": "victory_condition",
+          "label": "胜利条件",
+          "column": 17,
+          "numeric": false
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "side-quests",
+      "title": "支线任务",
+      "description": "四条路线的任务期限、地点与奖励",
+      "sheet": "7ypvuc",
+      "header_row": 2,
+      "header": "支线名称",
+      "first_row": 4,
+      "title_column": 3,
+      "image_column": null,
+      "subtitle_columns": [],
+      "fields": [
+        {
+          "key": "quest_type",
+          "label": "任务类型",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "npc",
+          "label": "任务NPC",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "kai_chapter",
+          "label": "凯篇",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "dietrich_chapter",
+          "label": "迪篇",
+          "column": 7,
+          "numeric": false
+        },
+        {
+          "key": "theodora_chapter",
+          "label": "赛篇",
+          "column": 8,
+          "numeric": false
+        },
+        {
+          "key": "leda_chapter",
+          "label": "蕾篇",
+          "column": 9,
+          "numeric": false
+        },
+        {
+          "key": "rewards",
+          "label": "报酬奖励",
+          "column": 10,
+          "numeric": false
+        },
+        {
+          "key": "timing_and_location",
+          "label": "触发时期与地点",
+          "column": 11,
+          "numeric": false
+        },
+        {
+          "key": "completion_and_deadline",
+          "label": "达成条件/期限",
+          "column": 12,
+          "numeric": false
+        },
+        {
+          "key": "hints",
+          "label": "提示与备注",
+          "column": 13,
+          "numeric": false
+        }
+      ],
+      "identity_columns": []
+    },
+    {
+      "id": "mounts",
+      "title": "坐骑",
+      "description": "捕捉地点、饲养偏好与满级加成",
+      "sheet": "bxlbpf",
+      "header_row": 2,
+      "header": "名称",
+      "first_row": 3,
+      "last_row": 22,
+      "title_column": 2,
+      "image_column": 3,
+      "subtitle_columns": [
+        1
+      ],
+      "fields": [
+        {
+          "key": "kind",
+          "label": "种类",
+          "column": 1,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "描述",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "hp_bonus",
+          "label": "HP能力加成（满级）",
+          "column": 5,
+          "numeric": true
+        },
+        {
+          "key": "strength_bonus",
+          "label": "力量能力加成（满级）",
+          "column": 6,
+          "numeric": true
+        },
+        {
+          "key": "magic_bonus",
+          "label": "魔力能力加成（满级）",
+          "column": 7,
+          "numeric": true
+        },
+        {
+          "key": "speed_bonus",
+          "label": "速度能力加成（满级）",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "dexterity_bonus",
+          "label": "技巧能力加成（满级）",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "defense_bonus",
+          "label": "防守能力加成（满级）",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "resistance_bonus",
+          "label": "魔防能力加成（满级）",
+          "column": 11,
+          "numeric": true
+        },
+        {
+          "key": "luck_bonus",
+          "label": "幸运能力加成（满级）",
+          "column": 12,
+          "numeric": true
+        },
+        {
+          "key": "charm_bonus",
+          "label": "魅力能力加成（满级）",
+          "column": 13,
+          "numeric": true
+        },
+        {
+          "key": "hp_growth",
+          "label": "HP成长加成（满级）",
+          "column": 15,
+          "numeric": true
+        },
+        {
+          "key": "strength_growth",
+          "label": "力量成长加成（满级）",
+          "column": 16,
+          "numeric": true
+        },
+        {
+          "key": "magic_growth",
+          "label": "魔力成长加成（满级）",
+          "column": 17,
+          "numeric": true
+        },
+        {
+          "key": "speed_growth",
+          "label": "速度成长加成（满级）",
+          "column": 18,
+          "numeric": true
+        },
+        {
+          "key": "dexterity_growth",
+          "label": "技巧成长加成（满级）",
+          "column": 19,
+          "numeric": true
+        },
+        {
+          "key": "defense_growth",
+          "label": "防守成长加成（满级）",
+          "column": 20,
+          "numeric": true
+        },
+        {
+          "key": "resistance_growth",
+          "label": "魔防成长加成（满级）",
+          "column": 21,
+          "numeric": true
+        },
+        {
+          "key": "luck_growth",
+          "label": "幸运成长加成（满级）",
+          "column": 22,
+          "numeric": true
+        },
+        {
+          "key": "charm_growth",
+          "label": "魅力成长加成（满级）",
+          "column": 23,
+          "numeric": true
+        },
+        {
+          "key": "taste",
+          "label": "口味",
+          "column": 25,
+          "numeric": false
+        },
+        {
+          "key": "food",
+          "label": "食材",
+          "column": 26,
+          "numeric": false
+        },
+        {
+          "key": "bait",
+          "label": "诱捕素材",
+          "column": 27,
+          "numeric": false
+        },
+        {
+          "key": "vegetable",
+          "label": "喜好蔬菜",
+          "column": 28,
+          "numeric": false
+        },
+        {
+          "key": "location",
+          "label": "捕捉地点",
+          "column": 29,
+          "numeric": false
+        },
+        {
+          "key": "skill_three",
+          "label": "骑乘特技（LV3）",
+          "column": 30,
+          "numeric": false
+        },
+        {
+          "key": "skill_five",
+          "label": "骑乘特技（LV5）",
+          "column": 31,
+          "numeric": false
+        },
+        {
+          "key": "release_item",
+          "label": "满级放生装备",
+          "column": 32,
+          "numeric": false,
+          "references": [
+            "accessories"
+          ]
+        },
+        {
+          "key": "release_effect",
+          "label": "放生装备效果",
+          "column": 33,
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "id": "battalions",
+      "title": "军团",
+      "description": "指挥要求、计策与能力加成",
+      "sheet": "fdm9oj",
+      "header_row": 1,
+      "header": "军团名称",
+      "first_row": 3,
+      "title_column": 1,
+      "image_column": 2,
+      "subtitle_columns": [
+        3,
+        4
+      ],
+      "fields": [
+        {
+          "key": "kind",
+          "label": "分类",
+          "column": 3,
+          "numeric": false
+        },
+        {
+          "key": "command",
+          "label": "指挥要求",
+          "column": 4,
+          "numeric": false
+        },
+        {
+          "key": "gambit",
+          "label": "计策",
+          "column": 5,
+          "numeric": false
+        },
+        {
+          "key": "uses",
+          "label": "次数",
+          "column": 6,
+          "numeric": true
+        },
+        {
+          "key": "strength",
+          "label": "力量",
+          "column": 7,
+          "numeric": true
+        },
+        {
+          "key": "magic",
+          "label": "魔力",
+          "column": 8,
+          "numeric": true
+        },
+        {
+          "key": "speed",
+          "label": "速度",
+          "column": 9,
+          "numeric": true
+        },
+        {
+          "key": "dexterity",
+          "label": "技巧",
+          "column": 10,
+          "numeric": true
+        },
+        {
+          "key": "defense",
+          "label": "防守",
+          "column": 11,
+          "numeric": true
+        },
+        {
+          "key": "resistance",
+          "label": "魔防",
+          "column": 12,
+          "numeric": true
+        },
+        {
+          "key": "luck",
+          "label": "幸运",
+          "column": 13,
+          "numeric": true
+        },
+        {
+          "key": "charm",
+          "label": "魅力",
+          "column": 14,
+          "numeric": true
+        },
+        {
+          "key": "gambit_diagram",
+          "label": "计策范围",
+          "column": 15,
+          "numeric": false
+        },
+        {
+          "key": "description",
+          "label": "计策效果",
+          "column": 16,
+          "numeric": false
+        },
+        {
+          "key": "acquisition",
+          "label": "获取方法",
+          "column": 21,
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "id": "drinks",
+      "title": "饮料",
+      "description": "调配材料与战斗效果",
+      "sheet": "d98iur",
+      "header_row": 1,
+      "header": "饮料名称",
+      "first_row": 2,
+      "title_column": 4,
+      "image_column": 3,
+      "fields": [
+        {
+          "key": "ingredients",
+          "label": "调配材料",
+          "column": 5,
+          "numeric": false,
+          "references": [
+            "items"
+          ],
+          "quantity_reference": true
+        },
+        {
+          "key": "effect",
+          "label": "效果",
+          "column": 6,
+          "numeric": false
+        },
+        {
+          "key": "notes",
+          "label": "说明",
+          "column": 7,
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "id": "gifts",
+      "title": "礼物",
+      "description": "礼物说明、价格与获取方式",
+      "sheet": "rw261m",
+      "header_row": 1,
+      "header": "名称",
+      "first_row": 2,
+      "title_column": 3,
+      "image_column": 2,
+      "subtitle_columns": [5],
+      "fields": [
+        { "key": "description", "label": "简介", "column": 4, "numeric": false },
+        { "key": "reference_price", "label": "参考价格", "column": 5, "numeric": false },
+        { "key": "shops", "label": "商店", "column": 6, "numeric": false },
+        { "key": "salvation_shops", "label": "救世篇商店", "column": 7, "numeric": false },
+        { "key": "quest_rewards", "label": "任务报酬", "column": 8, "numeric": false }
+      ]
+    },
+    {
+      "id": "meals",
+      "title": "料理",
+      "description": "料理图鉴与角色用餐偏好",
+      "sheet": "lbz2o6",
+      "expected_source_revision": 84209,
+      "header_row": 2,
+      "header_column": 8,
+      "header": "菜品",
+      "first_row": 3,
+      "last_row": 25,
+      "row_stride": 2,
+      "title_column": 9,
+      "image_column": 8,
+      "subtitle_columns": [],
+      "identity_columns": [],
+      "fields": []
+    },
+    {
+      "id": "bird-dialogues",
+      "title": "逗鸟问答",
+      "description": "按角色查看对话、推荐反应与来源校订标记",
+      "sheet": "7j1awm",
+      "expected_source_revision": 84209,
+      "header_row": 1,
+      "header": "中文台词",
+      "first_row": 3,
+      "title_column": 5,
+      "image_column": null,
+      "subtitle_columns": [2, 7],
+      "identity_columns": [2],
+      "fields": [
+        { "key": "character_group", "label": "角色范围", "column": 1, "numeric": false },
+        { "key": "character_name", "label": "角色", "column": 2, "references": ["characters"], "numeric": false },
+        { "key": "character_name_english", "label": "角色英文名", "column": 3, "numeric": false },
+        { "key": "original_prompt", "label": "原文对话", "column": 4, "numeric": false },
+        { "key": "translated_prompt", "label": "中文对话", "column": 5, "numeric": false },
+        { "key": "original_reaction", "label": "原文推荐反应", "column": 6, "numeric": false },
+        { "key": "translated_reaction", "label": "推荐反应", "column": 7, "numeric": false },
+        { "key": "correction_marker", "label": "表内校订标记", "column": 8, "numeric": false }
+      ]
+    },
+    {
+      "id": "campaign-timeline",
+      "title": "事件时间轴",
+      "description": "四条路线与共通篇章的事件、外传和观战节点",
+      "sheet": "m9bztx",
+      "header_row": 2,
+      "header_column": 1,
+      "header": "类别",
+      "first_row": 3,
+      "title_column": 2,
+      "title_fallback_columns": [8, 7, 4],
+      "image_column": null,
+      "subtitle_columns": [4],
+      "identity_columns": [1, 3, 4, 5, 6, 7],
+      "section_markers": {
+        "column": 1,
+        "values": {
+          "凯伊篇": "kai",
+          "迪托利希篇": "dit",
+          "赛奥朵拉篇": "seo",
+          "蕾达篇": "leda",
+          "战争篇": "common-war",
+          "救世篇": "common-salvation"
+        }
+      },
+      "fields": [
+        { "key": "event_type", "label": "事件类别", "column": 1, "numeric": false },
+        { "key": "event_name", "label": "事件名称", "column": 2, "numeric": false },
+        { "key": "related_character", "label": "相关人物", "column": 3, "numeric": false },
+        { "key": "chapter", "label": "章节", "column": 4, "numeric": false },
+        { "key": "start_time", "label": "开始时间", "column": 5, "numeric": false, "format": "game-date" },
+        { "key": "deadline", "label": "截止时间", "column": 6, "numeric": false, "format": "game-date", "blank_if_merged": true },
+        { "key": "trigger", "label": "触发方式", "column": 7, "numeric": false },
+        { "key": "rewards", "label": "奖励", "column": 8, "numeric": false },
+        { "key": "notes", "label": "备注", "column": 9, "numeric": false },
+        { "key": "route", "label": "路线范围", "column": 1, "numeric": false, "source": "section" }
+      ]
+    },
+    {
+      "id": "challenge-book",
+      "title": "迪篇挑战书",
+      "description": "挑战条件、地点、奖励与对应战技",
+      "sheet": "lj96sv",
+      "header_row": 2,
+      "header": "挑战名",
+      "first_row": 3,
+      "title_column": 9,
+      "image_column": null,
+      "subtitle_columns": [10, 12],
+      "identity_columns": [2, 10, 11, 12],
+      "fields": [
+        { "key": "combat_art", "label": "对应战技", "column": 2, "numeric": false },
+        { "key": "durability_cost", "label": "耐久消耗", "column": 3, "numeric": false },
+        { "key": "might", "label": "威力", "column": 4, "numeric": false },
+        { "key": "hit", "label": "命中", "column": 5, "numeric": false },
+        { "key": "critical", "label": "必杀", "column": 6, "numeric": false },
+        { "key": "range", "label": "射程", "column": 7, "numeric": false },
+        { "key": "combat_art_effect", "label": "战技效果", "column": 8, "numeric": false },
+        { "key": "challenge_name", "label": "挑战名称", "column": 9, "numeric": false },
+        { "key": "condition", "label": "接取条件", "column": 10, "numeric": false },
+        { "key": "deadline", "label": "任务截止时间", "column": 11, "numeric": false, "format": "game-date" },
+        { "key": "location", "label": "任务地点", "column": 12, "numeric": false },
+        { "key": "rewards", "label": "任务奖励", "column": 13, "numeric": false }
+      ]
+    },
+    {
+      "id": "beginner-routes",
+      "title": "初次游玩路线",
+      "description": "四条路线特点与最终章挑战提示",
+      "sheet": "h32fox",
+      "expected_source_revision": 84209,
+      "header_row": 1,
+      "header_column": 2,
+      "header": "主要角色",
+      "first_row": 2,
+      "last_row": 6,
+      "row_titles": {
+        "2": "凯伊篇",
+        "3": "迪托利希篇",
+        "4": "赛奥朵拉篇",
+        "5": "蕾达篇",
+        "6": "直接进入最终章"
+      },
+      "title_column": 2,
+      "image_column": 2,
+      "subtitle_columns": [3, 4],
+      "fields": [
+        { "key": "recommendation", "label": "原资料主观推荐", "column": 3, "numeric": false },
+        { "key": "recruitable_count", "label": "可挖角人数", "column": 4, "numeric": true },
+        { "key": "features", "label": "路线特色", "column": 5, "numeric": false },
+        { "key": "considerations", "label": "游玩注意", "column": 6, "numeric": false },
+        { "key": "world_coverage", "label": "可活动范围", "column": 7, "numeric": false }
+      ]
+    },
+    {
+      "id": "beginner-map-access",
+      "title": "世界地图开放条件",
+      "description": "名声等级、路线限制与第三部开放区域",
+      "sheet": "h32fox",
+      "expected_source_revision": 84209,
+      "header_row": 1,
+      "header_column": 9,
+      "header": "【世界地图】名声最低要求表",
+      "first_row": 2,
+      "last_row": 2,
+      "row_titles": { "2": "世界地图名声门槛" },
+      "title_column": 9,
+      "image_column": null,
+      "subtitle_columns": [],
+      "fields": [
+        { "key": "requirements", "label": "开放条件", "column": 9, "numeric": false }
+      ]
+    },
+    {
+      "id": "beginner-guide",
+      "title": "新手指南",
+      "description": "路线选择、队伍培养、时间管理与常见机制答疑",
+      "sheet": "h32fox",
+      "expected_source_revision": 84209,
+      "header_row": 8,
+      "header_column": 1,
+      "header": "QA备注",
+      "first_row": 9,
+      "last_row": 43,
+      "row_stride": 2,
+      "title_column": 1,
+      "strip_title_prefixes": ["Q:", "Q：", "Q;", "Q；"],
+      "image_column": null,
+      "subtitle_columns": [],
+      "identity_columns": [],
+      "fields": [
+        { "key": "answer", "label": "解答", "column": 1, "row_offset": 1, "strip_prefixes": ["A:", "A："], "numeric": false }
+      ]
+    },
+    {
+      "id": "endings",
+      "title": "结局",
+      "description": "单人和双人后日谈，包含触发条件与正文",
+      "record_source": "endings",
+      "source_id": "fireemblem-top-endings",
+      "source_name": "fireemblem.top · 结局一览",
+      "source_uri": "https://fireemblem.top/topics/endings",
+      "first_row": 1,
+      "title_column": 1,
+      "image_column": null,
+      "subtitle_columns": [2, 5],
+      "identity_columns": [8],
+      "fields": [
+        { "key": "ending_kind", "label": "结局类型", "column": 2, "numeric": false },
+        { "key": "characters", "label": "相关角色", "column": 3, "references": ["characters"], "reference_syntax": "list", "numeric": false },
+        { "key": "character_titles", "label": "角色称号", "column": 4, "numeric": false },
+        { "key": "ending_label", "label": "结局标签", "column": 5, "numeric": false },
+        { "key": "condition", "label": "触发条件", "column": 6, "numeric": false },
+        { "key": "story", "label": "后日谈正文", "column": 7, "numeric": false }
+      ]
+    }
+  ],
+  "character_learning": {
+    "sheet": "ps06wo",
+    "header_row": 1,
+    "header": "中文名",
+    "name_column": 1,
+    "group_header_row": 2,
+    "first_row": 4,
+    "groups": [
+      { "column": 3, "label": "个人/圣焰" },
+      { "column": 4, "label": "等级" },
+      { "column": 5, "label": "剑术" },
+      { "column": 6, "label": "枪术" },
+      { "column": 7, "label": "斧术" },
+      { "column": 8, "label": "弓术" },
+      { "column": 9, "label": "格斗术" },
+      { "column": 10, "label": "黑魔术" },
+      { "column": 11, "label": "白魔术" },
+      { "column": 12, "label": "指挥术" },
+      { "column": 13, "label": "步兵术" },
+      { "column": 14, "label": "马术" },
+      { "column": 15, "label": "重装术" },
+      { "column": 16, "label": "飞行术" }
+    ]
+  },
+  "gift_preferences": {
+    "sheet": "3eftmu",
+    "header_row": 1,
+    "header": "角色名称",
+    "name_column": 2,
+    "category_column": 4,
+    "tier_header_row": 2,
+    "first_row": 3,
+    "tiers": [
+      { "column": 5, "level": 1, "header": "1-非常喜欢" },
+      { "column": 6, "level": 2, "header": "2-很喜欢" },
+      { "column": 7, "level": 3, "header": "3-还算喜欢" },
+      { "column": 8, "level": 4, "header": "4-不喜欢" }
+    ]
+  },
+  "dining": {
+    "sheet": "lbz2o6",
+    "character_header_row": 1,
+    "character_header": "角色名称",
+    "name_column": 2,
+    "first_row": 3,
+    "tier_header_row": 2,
+    "tiers": [
+      { "column": 3, "level": 1, "header": "特别喜欢" },
+      { "column": 4, "level": 2, "header": "喜欢" },
+      { "column": 5, "level": 3, "header": "普通" },
+      { "column": 6, "level": 4, "header": "不喜欢" }
+    ],
+    "trio_first_row": 3,
+    "trio_header_row": 2,
+    "trio_members": [
+      { "header_column": 38, "column": 39, "header": "角色1" },
+      { "header_column": 40, "column": 41, "header": "角色2" },
+      { "header_column": 42, "column": 43, "header": "角色3" }
+    ],
+    "trio_relations": [
+      { "column": 44, "header": "关系1-2" },
+      { "column": 45, "header": "关系1-3" },
+      { "column": 46, "header": "关系2-3" }
+    ],
+    "trio_minimum": { "column": 47, "header": "组合最低等级" }
+  },
+  "restoration": { "sheet": "tfan0b" },
+  "theater": {
+    "sheet": "gmgn7m",
+    "activity_sheet": "f3zvkv",
+    "related_sidequest_title": "在剧场享受感动的时光"
+  },
+  "bird_dialogues": {
+    "sheet": "7j1awm",
+    "category_id": "bird-dialogues",
+    "header_row": 1,
+    "first_row": 3,
+    "character_groups": ["主角", "可招募角色"],
+    "headers": [
+      { "column": 1, "value": "分类" },
+      { "column": 2, "value": "角色中文名" },
+      { "column": 3, "value": "角色英文名" },
+      { "column": 4, "value": "台词（Prompt）" },
+      { "column": 5, "value": "中文台词" },
+      { "column": 6, "value": "正确反应（Reaction）" },
+      { "column": 7, "value": "反应" },
+      { "column": 8, "value": "备注" }
+    ],
+    "columns": {
+      "character_group": 1,
+      "character_name": 2,
+      "character_name_english": 3,
+      "original_prompt": 4,
+      "translated_prompt": 5,
+      "original_reaction": 6,
+      "translated_reaction": 7,
+      "correction_marker": 8
+    },
+    "corrected_marker": "✅",
+    "source_note_row": 2,
+    "source_note_column": 1
+  }
+}

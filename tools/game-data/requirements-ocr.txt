@@ -1,0 +1,2 @@
+# Pinned OCR runtime used for the local Engage image pass.
+rapidocr-onnxruntime==1.4.4

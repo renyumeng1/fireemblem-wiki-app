@@ -1,0 +1,17 @@
+[
+  {
+    "sheet_id": "demo1",
+    "name": "Sample Sheet",
+    "row_count": 3,
+    "column_count": 4,
+    "stored_cell_count": 4,
+    "revision": 9,
+    "status": "available",
+    "table_file": "tables/demo1.json"
+  },
+  {
+    "sheet_id": "dytwkr",
+    "name": "Hidden Drop Table",
+    "status": "unavailable"
+  }
+]

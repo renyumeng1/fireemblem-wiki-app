@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Reason / Black Magic tome & spark icon -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M5.5,4.5 H16.5 C17.6,4.5 18.5,5.4 18.5,6.5 V18.5 C18.5,19.3 17.8,20 17,20 H6.5 C5.4,20 4.5,19.1 4.5,18 V6 C4.5,5.2 5,4.5 5.5,4.5 Z M7.5,4.5 V20"
+        android:strokeColor="#FF000000"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.6" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M13,8.5 L14,11.2 L16.5,12.2 L14,13.2 L13,16 L12,13.2 L9.5,12.2 L12,11.2 Z" />
+</vector>

@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Firene: kingdom of abundance blossom crest -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,4 C14,6.5 14,9.5 12,11.5 C10,9.5 10,6.5 12,4 Z M12,20 C14,17.5 14,14.5 12,12.5 C10,14.5 10,17.5 12,20 Z M4,12 C6.5,10 9.5,10 11.5,12 C9.5,14 6.5,14 4,12 Z M20,12 C17.5,10 14.5,10 12.5,12 C14.5,14 17.5,14 20,12 Z"
+        android:strokeColor="#FF000000"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.6" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,10.5 A1.5,1.5 0 1,0 12.01,10.5 Z" />
+</vector>

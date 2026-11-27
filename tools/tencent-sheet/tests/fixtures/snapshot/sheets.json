@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo1",
+    "name": "Sample Sheet",
+    "hidden": false,
+    "type": "grid",
+    "rows": 3,
+    "columns": 4
+  },
+  {
+    "id": "dytwkr",
+    "name": "Hidden Drop Table",
+    "hidden": true,
+    "type": "grid",
+    "rows": 40,
+    "columns": 5
+  }
+]

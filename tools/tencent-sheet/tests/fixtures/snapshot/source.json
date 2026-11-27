@@ -1,0 +1,15 @@
+{
+  "url": "https://docs.qq.com/sheet/example",
+  "title": "Synthetic Snapshot",
+  "retrieved_at": "2026-11-16T00:00:00+00:00",
+  "revision": 9,
+  "state": "complete_for_visible_sheets",
+  "missing_sheets": [
+    {
+      "sheet_id": "dytwkr",
+      "name": "Hidden Drop Table",
+      "hidden": true,
+      "reason": "The ordinary viewer did not return this hidden sheet."
+    }
+  ]
+}

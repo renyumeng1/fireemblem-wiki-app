@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Elusia: kingdom of snow and knowledge frost star -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,3 V21 M4.2,7.5 L19.8,16.5 M19.8,7.5 L4.2,16.5"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeWidth="1.7" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9.8,5 L12,7.2 L14.2,5 M9.8,19 L12,16.8 L14.2,19 M12,9.2 L14.5,12 L12,14.8 L9.5,12 Z"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.4" />
+</vector>
