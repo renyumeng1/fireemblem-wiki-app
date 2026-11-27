@@ -1028,7 +1028,7 @@ internal fun SeedSearchScreen(
                         }
                         if (showAlgorithmDetails) {
                             Text(
-                                "算法依据已获许可的 FE_Rigging_Buddy ${BuddyRules.REVISION.take(8)}，内置多线程与无分支提前剪枝加速；搜寻到的种子表示匹配，不代表存档会自动更新。",
+                                "算法参考 FE_Rigging_Buddy ${BuddyRules.REVISION.take(8)}，内置多线程与无分支提前剪枝加速；搜寻到的种子表示匹配，不代表存档会自动更新。",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

@@ -109,7 +109,7 @@ jobs:
       - name: Determine release version & signing mode
         id: meta
         env:
-          HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+          HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -145,7 +145,7 @@ jobs:
         run: |
           set -euo pipefail
           KEYSTORE_FILE="${RUNNER_TEMP}/release.keystore"
-          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_FILE}"
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | tr -d '\r\n\t ' | base64 --decode > "${KEYSTORE_FILE}"
           echo "ANDROID_KEYSTORE_PATH=${KEYSTORE_FILE}" >> "${GITHUB_ENV}"
 
       - name: Run unit tests, lint, and assemble APK

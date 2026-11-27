@@ -1,8 +1,8 @@
 # 火纹个人助手 · Fire Emblem Companion
 
 <p align="center">
-  <b>一部装进口袋与平板的《火焰纹章》全离线随行战术终端</b><br />
-  全面覆盖 <b>《万缕千丝》</b> · <b>《风花雪月》</b> · <b>《Engage（结合）》</b> 三部作品
+  <b>面向 Android 手机与平板的《火焰纹章》离线伴侣应用</b><br />
+  支持 <b>《万缕千丝》</b> · <b>《风花雪月》</b> · <b>《Engage（结合）》</b> 三部作品的资料查阅与养成辅助
 </p>
 
 <p align="center">
@@ -10,201 +10,222 @@
   <img alt="Version" src="https://img.shields.io/badge/Version-v0.2.0-B3472B" />
   <img alt="Offline" src="https://img.shields.io/badge/Offline%20Wiki-7%2C927%20Entries%20%7C%202%2C512%20Images-1F4E79" />
   <img alt="OCR" src="https://img.shields.io/badge/On--Device%20OCR-PP--OCRv4%20(14.9%20MB)-5B4B8A" />
-  <img alt="GPU" src="https://img.shields.io/badge/Seed%20Search-OpenGL%20ES%203.1%20Compute-D97706" />
+  <img alt="CI" src="https://img.shields.io/badge/CI-GitHub%20Actions%20Auto%20Release-2088FF?logo=githubactions&logoColor=white" />
 </p>
 
-玩火纹时，你是否经常在手机浏览器、Excel 表格、攻略网站和截图相册之间来回切屏？
-
-**火纹个人助手** 将三部作品的离线图鉴、高清互动世界地图、**Switch 截图批量 OCR 识图对比多线培养**、**GPU 极速乱数反推** 以及 **AI「战策参谋」规划并一键导入角色个人成长路线** 全部整合进一款原生 Android 应用——**断网秒开、手机竖屏顺手、平板横屏双栏高效**，让每一场战局与每一次转职都有据可依。
+**火纹个人助手** 是一款面向个人游玩的原生 Android（Jetpack Compose）伴侣应用，自适应**手机竖屏底部导航栏**与**平板横屏侧边导航栏 + 双栏工作台**。应用内置三作离线 SQLite 资料库，重点围绕《万缕千丝》的多线养成、乱数反推与转职规划构建闭环，同时提供《风花雪月》期望转职规划与《Engage》固定成长推算器。
 
 ---
 
-## 为什么选择它？（五大核心体验）
+## 核心功能概览
 
-- **📸 Switch 截图本地 OCR 批量识别 → 秒级对比四线多线培养**
-  打完《万缕千丝》多条路线，不再需要对着电视逐项手抄九维属性！内置按需下载的 **PP-OCRv4 中文端侧模型（仅 14.9 MB，100% 本地离线推理）**，一次多选多张 NS 角色状态截图，自动识别角色、等级、职业、路线与九项属性，核对入库后立刻在**四线多路线融合面板**中横向比对，绿色星标一眼锁定每项最高值、融合总上限以及取消某条路线时的属性损益。
-- **🤖 「战策参谋」AI 规划 → 一键直接导入角色个人成长规划**
-  不仅能聊天查三作图鉴，更能直接调用本地精确算法求解三作专属养成方案！在《万缕千丝》中，AI（或零密钥离线快捷模式）为你算好带**前期转职门控**、`需考试解锁` 门槛提示与**加权跳点（考试跳乱数）**的「转职分档方案」后，点击 **「一键导入成长工作台」**，方案内的每一次转职节点、跳过时机、权重与职业路径会**直接写入该角色的个人成长规划与 99 级养成工作台**，马上就能微调方案、落盘保存并跟着进度一步步升级打卡。
-- **⚡ 手机 GPU 计算着色器极速反推乱数种子**
-  基于零 NDK 的 **OpenGL ES 3.1 Compute Shader + 64-bit Barrett 魔数算法**，录入 4 次升级即可在手机/平板 GPU 上高速遍历全量 `uint32` 种子空间并由 CPU 逐位精确核验（不兼容设备自动无缝回退多核 CPU），立刻解锁后续至 **Lv.99** 的全部升级跳点、同种子换职对比与考试概率门槛。
-- **📚 三作 7,927 条全离线图鉴 + 61,438 路网节点互动地图**
-  内置《万缕千丝》《风花雪月》《Engage》三作预制 SQLite 资料库与 **2,512 张本地 WebP 立绘/图标**；全站支持模糊联想搜索与头像视觉筛选；更有《万缕千丝》5 篇章 **1,242 点位** 高清互动地形图、163 种素材反查与 **Dijkstra 最短路径规划**。
-- **🔐 多周目存档隔离 & 端到端加密跨设备同步**
-  手机随手记录、平板大屏规划：支持多周目存档隔离、DAG 修订历史与冲突可视化合并、本地加密备份，以及 **端到端加密 WebDAV 云同步**；API Key 与同步凭据全部经 `AndroidKeyStore` 硬件级 **AES-256-GCM** 加密存储。
+| 模块 | 当前已实现能力 | 状态说明 |
+| :--- | :--- | :--- |
+| **多线融合 × Switch 截屏 OCR** | 按需下载 14.9 MB 本地 PP-OCRv4 模型，离线批量识别 NS 状态截图（自动识别角色、篇章纹章、等级、职业、九维属性并做总和校验），一键写入多线融合面板横向对比同一可挖角角色在四条路线的峰值与路线子集损益 | 已完成 |
+| **战策参谋（AI + 离线三作规划）** | 支持多模型配置（主对话 / 记忆压缩分轨路由）、自动记忆与上下文压缩、Markdown 表格与图鉴引用；**不配 API Key 也可离线使用三作规划器**。规划出的《万缕千丝》转职分档方案可**一键直接导入角色个人培养计划**逐步打卡 | 已完成 |
+| **乱数反推与 99 级养成工作台** | 录入 4 次升级即可通过 GPU Compute Shader / 多核 CPU 定位种子，预览至 Lv.99 的每次跳点与考试门槛、同种子换职对比、手动编排/导入个人培养计划并逐步打卡 | 已完成 |
+| **三作离线图鉴与模糊搜索** | 内置《万缕千丝》《风花雪月》《Engage》合计 62 分类 7,927 条离线词条与 2,512 张 WebP 图片，全站模糊联想下拉搜索、头像视觉筛选与阅读位置记忆 | 已完成 |
+| **攻略百科、成长模拟与私人梯度榜** | 四线任务清单、时间轴、用餐三人搭配、礼物/支援/逗鸟/种植/复兴/剧场/防剧透结局、多阶段成长模拟器、私人梯度榜 | 已完成 |
+| **多存档与加密 WebDAV 同步** | 多周目存档隔离、DAG 修订历史与冲突提示、口令加密本地备份、端到端加密 WebDAV 同步 | 已完成 |
+| **《万缕千丝》离线世界地图** | 已支持 5 篇章地形底图缩放浏览、点位分类筛选与文字搜索、探索进度打卡、基于当前路网的基础起终点路线估算与 PNG 导出 | **持续完善中**（剧情动态封锁与更细粒度的地图联动仍在迭代） |
 
 ---
 
-## 实机与模拟器界面预览
+## 全功能实机与模拟器界面一览
 
-> 以下全部截图采集自 Android 手机（竖屏 `NavigationBar`）与平板（横屏 `NavigationRail` + 双栏工作台）实际运行画面。
+以下 **26 张截图** 全部截取自 Android 手机与平板模拟器真实运行状态（暖白浅色主题）。
 
-### 手机竖屏体验
+### 一、多线培养对比 × Switch 截屏本地 OCR 批量识别
 
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/01_home_phone.png" alt="首页总览" width="260" /><br />
-      <b>首页总览</b><br />
-      <sub>三作一键切换、全局模糊搜索、个人工作台状态与快捷入口</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/02_atlas_fw_characters_phone.png" alt="万缕千丝角色图鉴" width="260" /><br />
-      <b>《万缕千丝》角色图鉴</b><br />
-      <sub>主角路线与势力阵营头像视觉筛选、立绘与分页检索</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/03_atlas_engage_home_phone.png" alt="Engage离线资料库" width="260" /><br />
-      <b>三作切换 ·《Engage》</b><br />
-      <sub>25 类 2,876 条离线索引：纹章士、牵绊戒指与全角色职业</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/04_guides_hub_phone.png" alt="攻略百科中心" width="260" /><br />
-      <b>攻略百科中心</b><br />
-      <sub>主线世界地图、四线任务清单、事件时间轴、机制公式与日常社交</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/05_tools_hub_phone.png" alt="工具中心" width="260" /><br />
-      <b>工具中心</b><br />
-      <sub>战策参谋、乱数养成工作台（已定位种子一键直达）与实用工具</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/06_personal_sync_phone.png" alt="个人设置与端侧OCR" width="260" /><br />
-      <b>我的 · 偏好与本地 OCR</b><br />
-      <sub>浅色/深色主题、阅读位置记忆、14.9 MB 本地 OCR 模型与云同步</sub>
-    </td>
-  </tr>
-</table>
-
-### 平板宽屏与双栏工作台
+针对《万缕千丝》中可跨多条路线挖角培养的角色（如亚历珊德拉、皮特鲁、媞雅拉、伊欧、米迦艾拉等），支持直接导入 Switch 状态截图离线批量识别九维属性，免去手抄，在多线融合面板中直接对比四线峰值并决定保留哪几条线。
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="docs/screenshots/07_atlas_3h_detail_tablet.png" alt="风花雪月角色详情双栏视图" width="480" /><br />
-      <b>《风花雪月》双栏图鉴详情</b><br />
-      <sub>左侧导航栏 + 学级筛选 + 右侧默认/五年后立绘与分位评级面板</sub>
+      <img src="docs/screenshots/10c_ocr_batch_review_tablet.png" alt="NS 截图本地 OCR 批量识别与审核" width="480" /><br />
+      <b>Switch 截图本地 OCR 批量识别审核</b><br />
+      <sub>本地 PP-OCRv4 离线识图，自动识别角色/篇章纹章/九维属性并做能力总和校验，确认后一键批量写入</sub>
     </td>
     <td align="center" width="50%">
-      <img src="docs/screenshots/08_world_map_tablet.png" alt="互动世界地图" width="480" /><br />
-      <b>《万缕千丝》交互式世界地图</b><br />
-      <sub>5 篇章 1,242 点位、真实道路网绘制、名声条件路线规划与导出</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/09_seed_workbench_tablet.png" alt="乱数养成工作台" width="480" /><br />
-      <b>99 级乱数养成工作台（个人规划落地页）</b><br />
-      <sub>承接战策参谋一键导入的转职与跳点计划，支持逐级换职对比与保存</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/10a_route_merge_overview_tablet.png" alt="多线融合总览矩阵" width="480" /><br />
-      <b>四线多路线融合总览 + OCR 截图导入</b><br />
-      <sub>顶部一键「截图导入」批量识图，全角色四线属性峰值与损益一目了然</sub>
+      <img src="docs/screenshots/10a_route_merge_overview_tablet.png" alt="四线多路线融合总览矩阵" width="480" /><br />
+      <b>多线融合总览矩阵（真实四线可挖角角色）</b><br />
+      <sub>一屏汇总亚历珊德拉、伊欧、米迦艾拉、皮特鲁等跨线角色在各线的峰值属性来源、自选总和与损益差值</sub>
     </td>
   </tr>
   <tr>
     <td align="center" colspan="2">
-      <img src="docs/screenshots/10b_route_merge_detail_tablet.png" alt="多线融合单人四线横评" width="760" /><br />
-      <b>单人四线培养横向对比</b><br />
-      <sub>自由勾选参与融合的路线，绿色星标高亮各项最高值与融合上限，直达角色图鉴</sub>
+      <img src="docs/screenshots/10b_route_merge_detail_tablet.png" alt="单人四线属性横向对比" width="760" /><br />
+      <b>单人四线横向对比（亚历珊德拉）</b><br />
+      <sub>表头可自由勾选参与融合的路线（不删原始数据），绿色星标自动标注各项峰值与融合上限，右上角直达图鉴</sub>
     </td>
   </tr>
 </table>
 
-### 战策参谋 · 三作专属成长规划
+### 二、战策参谋（AI 对话 + 三作规划 → 一键导入角色个人培养计划）
+
+支持「离线快捷」与「对话参谋」双模式。在对话或离线模式下算出的《万缕千丝》**转职分档方案**，可直接在卡片中切换档位、展开查看逐级收益，并点击 **「一键导入成长工作台」** 直接落盘为该角色的个人培养计划，在工作台中按步打卡推进。
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="docs/screenshots/11_agent_fw_tiered_tablet.png" alt="万缕千丝转职分档方案" width="480" /><br />
-      <b>《万缕千丝》转职分档方案</b><br />
-      <sub>前期未解锁门控、路线限定过滤、<code>需考试解锁</code> 门槛与<b>一键导入个人工作台</b></sub>
+      <img src="docs/screenshots/11b_agent_chat_markdown_import_tablet.png" alt="战策参谋 AI 对话模式与 Markdown 表格引用" width="480" /><br />
+      <b>战策参谋 · 对话模式</b><br />
+      <sub>工具调用轨迹、Markdown 表格渲染、可点击图鉴引用徽标，以及新建会话 / 压缩上下文 / 记入记忆 / 分叉</sub>
     </td>
     <td align="center" width="50%">
-      <img src="docs/screenshots/12_agent_3h_planner_tablet.png" alt="风花雪月期望转职规划" width="480" /><br />
-      <b>《风花雪月》期望转职规划</b><br />
-      <sub>2 点保底重抽精确期望、自动 5 阶段路线与 <code>Lv.10 重骑士</code> 考证蹭保底</sub>
+      <img src="docs/screenshots/11_agent_fw_tiered_tablet.png" alt="万缕千丝转职分档方案" width="480" /><br />
+      <b>《万缕千丝》转职分档方案</b><br />
+      <sub>支持前期未解锁职业门控（默认 Lv.10 起）、路线限定过滤、<code>需考试解锁</code> 门槛明细与加权跳过</sub>
     </td>
   </tr>
   <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/13_agent_engage_planner_tablet.png" alt="Engage固定成长推算" width="480" /><br />
-      <b>《Engage》固定成长精确推算</b><br />
-      <sub>100% 确定性满 100 进 1 累加器、大师证转职差值、9 维含体格与余数面板</sub>
+    <td align="center" colspan="2">
+      <img src="docs/screenshots/09b_workbench_plan_tab_tablet.png" alt="从战策参谋一键导入后的角色个人培养计划" width="760" /><br />
+      <b>一键导入直通「角色个人培养计划」</b><br />
+      <sub>点选方案卡片导入后，自动生成皮特鲁 <code>Lv.5 → Lv.25</code> 完整 24 步个人计划，支持逐步打卡「完成当前步」、回退、临时插入考试/转职与保存方案</sub>
     </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/14_agent_engage_expanded_tablet.png" alt="Engage逐级跳点明细展开" width="480" /><br />
-      <b>可展开逐级明细预览</b><br />
-      <sub>三作规划卡片均支持展开提前预览每一级跳点（+1/+2）或当前面板(余数)</sub>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/12_agent_3h_planner_tablet.png" alt="风花雪月期望转职规划" width="310" /><br />
+      <b>《风花雪月》期望转职规划</b><br />
+      <sub>9 维 2 点保底重抽精确期望 + <code>Lv.10 重骑士</code> 考证蹭保底</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/13_agent_engage_planner_tablet.png" alt="Engage固定成长精确推算" width="310" /><br />
+      <b>《Engage》固定成长推算</b><br />
+      <sub>满 100 进 1 确定性推算、大师证晋升差值、9 维含体格与余数</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/14_agent_engage_expanded_tablet.png" alt="三作规划可展开逐级预览表" width="310" /><br />
+      <b>可展开逐级跳点明细</b><br />
+      <sub>提前预览每一级跳点（+1/+2）或当前面板与剩余积分</sub>
     </td>
   </tr>
 </table>
 
----
+### 三、乱数种子反推、99 级养成工作台、成长模拟与私人梯度榜
 
-## 核心功能全景
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/05_tools_hub_phone.png" alt="工具中心手机视图" width="240" /><br />
+      <b>工具中心（手机竖屏）</b><br />
+      <sub>战策参谋、已定位种子的快捷角色卡与常用实用工具</sub>
+    </td>
+    <td align="center" width="67%">
+      <img src="docs/screenshots/09a_seed_search_tablet.png" alt="乱数种子反推录入界面" width="500" /><br />
+      <b>乱数种子反推（手动录入 / 记录册 / Buddy 备份）</b><br />
+      <sub>录满 4 次实测升级即可定位种子（支持移动端 GPU Compute Shader 与多核无除法 CPU 自动回退）</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/09_seed_workbench_tablet.png" alt="99 级乱数逐级预览工作台" width="480" /><br />
+      <b>99 级乱数预览与换职对比</b><br />
+      <sub>展示后续至 Lv.99 每一级九维跳点、考试最低概率门槛、跳过/考试与同种子换职对比</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/09c_growth_sim_tablet.png" alt="多阶段成长模拟与导出" width="480" /><br />
+      <b>成长模拟与试算</b><br />
+      <sub>自由配置多阶段职业与升级数，查看随机期望 / 固定成长余数，支持基准锁定对比与 JSON/PNG 导出</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="docs/screenshots/09d_tier_list_tablet.png" alt="私人角色梯度榜" width="760" /><br />
+      <b>私人梯度榜</b><br />
+      <sub>支持新建多份个人梯度榜、自定义档位、调整角色顺位、写培养评语并导入/导出 JSON</sub>
+    </td>
+  </tr>
+</table>
 
-### 1. Switch 截图本地 OCR 批量识别 × 四线多线培养对比
+### 四、三作全离线图鉴与全站模糊检索
 
-针对《万缕千丝》四条主角路线（凯伊 / 迪托利希 / 赛奥朵拉 / 蕾达）并行的多线养成痛点，应用打通了 **「截屏批量识图 → 人工快审 → 多线横评决策」** 完整闭环：
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/01_home_phone.png" alt="首页总览" width="250" /><br />
+      <b>首页总览</b><br />
+      <sub>三作切换栏、工作台进度统计与图鉴直达</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/02b_fuzzy_search_dropdown_phone.png" alt="全站模糊联想下拉搜索" width="250" /><br />
+      <b>全站模糊联想下拉</b><br />
+      <sub>输入子序列（如 <code>皮鲁</code>）实时弹出带头像候选条目，点选直达详情</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/02_atlas_fw_characters_phone.png" alt="万缕千丝头像视觉筛选" width="250" /><br />
+      <b>《万缕千丝》视觉头像筛选</b><br />
+      <sub>按主角路线与势力阵营头像卡片快速筛选角色</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/02c_fw_character_detail_tablet.png" alt="万缕千丝角色双栏详情" width="480" /><br />
+      <b>《万缕千丝》角色双栏详情</b><br />
+      <sub>成长率分位评级、可学技能矩阵、好感支援、逗鸟结局与加入比较/收藏笔记</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/07_atlas_3h_detail_tablet.png" alt="风花雪月角色双栏详情" width="480" /><br />
+      <b>《风花雪月》双栏角色详情</b><br />
+      <sub>学级筛选、默认/五年后立绘切换、个人特技、初始属性分位条与可学技能</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/03_atlas_engage_home_phone.png" alt="Engage 首页与专题入口" width="240" /><br />
+      <b>《Engage》资料首页</b><br />
+      <sub>25 类 2,876 条离线资料，含 20 纹章士与 492 牵绊戒指</sub>
+    </td>
+    <td align="center" width="67%">
+      <img src="docs/screenshots/03b_engage_detail_tablet.png" alt="Engage 纹章士双栏详情" width="500" /><br />
+      <b>《Engage》纹章士双栏详情</b><br />
+      <sub>左侧头像列表与模糊检索，右侧登场章节、入队条件、满级牵绊加成与技能详情</sub>
+    </td>
+  </tr>
+</table>
 
-1. **端侧离线 PP-OCRv4 识别引擎（`LocalOnnxOcrRecognizer` + `OcrModelManager`）**：
-   - 在「我的 → 本地 OCR 模型」按需下载约 **14.9 MB** 的中文端侧检测/识别模型（带 SHA-256 校验，可随时一键删除释放空间）；推理全程在本地 ONNX Runtime 执行，无需联网、不上传图片。
-   - 同时支持在「战策参谋」模型配置中可选启用**多模态视觉模型**作为 OCR 备选通道。
-2. **多图一键批量导入与结构化解析（`RouteMergeOcrImportSheet` + `NsScreenshotStatParser`）**：
-   - 在「多线融合面板」点击右上角 **「截图导入」**，可一次从相册勾选多张 Switch 角色状态截图。
-   - 自动匹配内置图鉴角色/职业词典，提取**角色名、所属路线、等级、当前职业与九项基础属性**，对低置信度字段自动标色提示，支持在审核卡片中快速微调并一键批量落盘。
-3. **四线融合总览与单人横评（`RouteMergeScreen`）**：
-   - **总览矩阵模式**：一屏对比全队角色在四条路线的最高等级、各项峰值属性来源与融合总和，支持按自选总和、单项最高、融合损失大小排序。
-   - **单人横评模式**：自由勾选/取消任意路线（不删原始数据），实时对比「自选路线融合」与「四线全开参考」的每项差值，帮你决定哪条线的哪位角色最值得保留投入。
+### 五、攻略百科与世界地图（持续完善中）
 
-### 2. 「战策参谋」AI 助手与个人成长规划无缝闭环
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/04_guides_hub_phone.png" alt="攻略百科中心" width="240" /><br />
+      <b>攻略百科中心</b><br />
+      <sub>四线任务清单、时间轴、挑战书、机制公式及全套日常社交攻略</sub>
+    </td>
+    <td align="center" width="67%">
+      <img src="docs/screenshots/04b_guide_dining_tablet.png" alt="用餐三人搭配攻略" width="500" /><br />
+      <b>用餐三人搭配查询</b><br />
+      <sub>按角色/菜品反查或自由组合三位角色，自动匹配共同偏好料理与关系等级</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="docs/screenshots/08_world_map_tablet.png" alt="离线世界地图（持续完善中）" width="760" /><br />
+      <b>《万缕千丝》离线世界地图（功能持续完善中）</b><br />
+      <sub>当前提供 5 篇章地形底图缩放、点位类型筛选与搜索、探索进度打卡及基础起终点路线参考与 PNG 导出；剧情动态封锁与更深入的地图联动仍在迭代中</sub>
+    </td>
+  </tr>
+</table>
 
-「战策参谋」提供 **「离线快捷」** 与 **「对话参谋」** 双模式——**不填任何 API Key 也能完整使用三作离线规划器与跨作图鉴检索**。
+### 六、我的：偏好设置、端侧 OCR 模型管理、同步与资料来源
 
-#### Agent 规划直通「角色个人成长规划」
-- 无论是在「对话参谋」中让 AI 读取你存档里的种子和属性自动规划，还是在「离线快捷」中手动微调参数，生成《万缕千丝》**转职分档方案**卡片后：
-  - 先可在卡片内横向切换不同转职次数档位（不转职基准 / 转 1 次 / 转 2 次 / 全局最优），并**展开逐级加点与跳过明细**提前预览每一级的收益；
-  - 选中心仪方案后，点击 **「一键导入成长工作台」**，确认即可将该方案的种子起点、自定义九维权重、每一次**转职节点**与**考试跳过步骤**直接写入你的个人存储（`SeedWorkbenchRecord`），并立即打开 **99 级养成工作台（培养计划页）**；
-  - 进入工作台后可继续逐级替换职业、插入临时考试/跳过、保存为角色个人培养方案，并在日常游玩时按步骤打卡推进；返回时自动还原战策参谋原对话滚动位置。
-
-#### 三作专属成长与转职规划引擎
-- **《万缕千丝》转职分档方案（`ParetoGrowthPlanner`）**：
-  - 结合精确乱数种子搜索多档最优路径，支持自定义九维权重、按总跳点或加权分设定**考试跳过不想要的加点**。
-  - **前期可行性门控**：角色仅解锁 0 阶基础职业且低等级时，默认限制未解锁职业从 **Lv.10 起** 预演转职，杜绝在资格考试尚未开放时给出不可行建议；用户可随时自定义「最早转职等级」。
-  - 自动按当前篇路线过滤不可获取的路线限定/第三部专属职业，并为所有未解锁节点清晰标注 **`需考试解锁`** 及推荐等级、名声、武器等级与票证要求。
-- **《风花雪月》期望成长与转职规划（`ThreeHousesGrowthPlanner`）**：
-  - 覆盖 40 名角色与过滤 NPC/敌方/魔兽后的全部可用职业，严格校验性别、专属与初级/中级/高级/最高级考试条件。
-  - 对学生与主角采用 **9 维 2 点保底重抽的精确泊松-二项分布（Poisson-Binomial）闭式期望**，并完整计算**转职保底永久补点**与**考证蹭保底**（如 `Lv.10 重骑士` 补防守至 12 后仍转高成长职业升级），卡片支持展开逐级期望面板。
-- **《Engage》固定成长精确推算器（`EngageFixedGrowthPlanner`）**：
-  - 100% 确定性复现超难/固定模式满 100 进 1 累加器（初始余数 = 个人成长率 `% 100`、大师证/横转基础值切换且余数跨职保留、有效上限钳制）。
-  - 支持 9 维含「体格」、**贾恩「努力家」** 职业成长 `×2`、**琪姬「星玉的加护」** 全成长 `+15%`，逐级明细支持在「每级跳点（`+1/+2`）」与「当前面板（余数）」视图间自由切换。
-
-#### Pi 风格多模型架构与记忆系统
-- **多模型注册表与角色分工**：支持 DeepSeek、阿里百炼（千问）、Anthropic Claude、硅基流动以及任意 OpenAI 兼容 HTTPS / 局域网本地网关；可独立指定 **主对话模型** 与 **记忆整理/上下文压缩模型**。
-- **自动记忆与上下文压缩**：多历史会话持久化与新建/分支切换；对话推进时自动提炼用户养成偏好进入长期记忆库，达到上下文阈值自动摘要压缩，避免长对话超限或失忆。
-- **富文本 Markdown & 跨作图鉴引用**：原生渲染标题、表格与代码块；AI 回复附带可点击的三作图鉴引用徽标，直达对应词条并返回原位置。
-
-### 3. 乱数养成工作台与 GPU 计算着色器反推
-
-- **升级记录册**：记录角色每次升级的九维跳点、资格考试（概率与成败）、换职与跳过，支持导入外部 `FE_Rigging_Buddy` 备份与成长种子 JSON。
-- **GPU 极速反推**：无需 NDK，通过 **OpenGL ES 3.1 Compute Shader + 64-bit Barrett 魔数乘法 + 工作组共享内存规约** 在移动端 GPU 极速遍历 `2^32` 种子空间，首次自动执行确定性自检、结果由 CPU 逐位精确核验，不兼容驱动自动无缝回退多核 CPU。
-- **99 级养成工作台**：实时预览后续至 Lv.99 的每一次升级与考试最低概率门槛、查看同种子**换职对比**、执行自动转职规划并持久化保存个人方案。
-- **实用辅助工具**：另内置多阶段**成长模拟与试算**（期望 / 固定成长余数对比导出）与三作**私人梯度榜**（自由分档排序与写评语）。
-
-### 4. 三作全离线图鉴、攻略百科与交互式世界地图
-
-- **三作 7,927 条全离线资料**：顶部一键切换《万缕千丝》《Engage》《风花雪月》，全站模糊联想检索（支持子序列与容错拼写）、角色视觉头像筛选、最近浏览与返回原阅读位置。
-- **《万缕千丝》高清互动世界地图**：5 篇章 **1,242 点位**（18 种类型）、**163 种素材**反查、**61,438 路网节点**与 **60,753 条边**，支持手势缩放、按存档隔离探索打卡、结合名声与已发现地点的 **Dijkstra 最短路径规划** 以及高清路线图导出。
-- **完整流程与社交攻略**：四线任务清单、74 条事件时间轴、迪篇挑战书、新手指南、19 类 463 条系统机制与成长公式、礼物偏好双向反查、三人用餐搭配、2,016 对支援关系、485 条逗鸟问答、种植收获与肥料地图直达、复兴清单库存缺口追踪、剧场演出，以及带主动防剧透确认开关的 206 条结局后日谈。
-
-### 5. 多周目个人存档与端到端加密同步
-
-- **多存档隔离**：不同周目/路线的升级记录、个人成长规划、世界地图探索、四线融合、收藏与梯度榜完全隔离。
-- **DAG 修订历史与冲突解决**：跨设备同步遇并发修改时可视化提示冲突并由你选择保留版本，绝不静默丢数据。
-- **端到端加密备份 & WebDAV 云同步**：支持口令加密本地备份导出/导入及 WebDAV 跨设备同步，所有密钥与凭据经 `AndroidKeyStore` 硬件级 AES-256-GCM 加密。
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/06_personal_sync_phone.png" alt="我的设置与端侧 OCR 模型管理" width="270" /><br />
+      <b>偏好设置、本地 OCR 与同步入口</b><br />
+      <sub>浅色/深色主题、阅读位置记忆、14.9 MB 本地 PP-OCRv4 模型按需下载/删除、战策参谋配置、多存档与加密 WebDAV 同步</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/06b_personal_sources_phone.png" alt="App 内来源与权利完整可点击链接" width="270" /><br />
+      <b>App 内「来源与权利」</b><br />
+      <sub>完整列出本项目所引用的所有资料网站、参考仓库、端侧模型与开源组件链接，点击可直接跳转查看</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -215,61 +236,70 @@
 | **《万缕千丝》图鉴与攻略** | `wiki/content.db` | 23 | **3,244 词条** / 6,021 关联（76 角色、63 职业、577 特技、435 战技、478 武器、2,016 支援对、463 机制、485 逗鸟、206 结局） | 915 张 |
 | **《风花雪月》资料包** | `games/three-houses/pack.db` | 14 | **1,807 词条** / 2,008 关联（40 角色全中文面板与成长、92 职业、367 技能战技、353 装备、84 章节、304 支援） | 564 张 |
 | **《Engage》资料包** | `games/engage/pack.db` | 25 | **2,876 词条**（42 主角团、68 职业含 59 完整上下限、20 纹章士、492 牵绊戒指、531 特技、405 武器、765 成就） | 1,033 张 |
-| **《万缕千丝》世界地图** | `world-map/maps.db` | 5 篇章 | **1,242 点位**（18 类型）、**163 素材**（2,839 采集点）、**61,438 路网节点**、60,753 道路边 | 高清地形图 |
+| **《万缕千丝》世界地图** | `world-map/maps.db` | 5 篇章 | **1,242 点位**（18 类型）、**163 素材**（2,839 采集点）、**61,438 路网节点**、60,753 道路边 | 离线地形底图 |
 
 ---
 
 ## 技术架构与目录
 
-采用 **`:core-domain`（纯 Kotlin 领域与算法引擎）+ `:android-app`（Jetpack Compose Material 3 客户端）** 双模块设计：
+采用 **`:core-domain`（纯 Kotlin 领域与算法引擎）+ `:android-app`（Jetpack Compose Material 3 客户端）** 双模块结构：
 
 ```text
 fireemblem/
-├── core-domain/          # 纯 JVM Kotlin：乱数/期望/固定成长规划引擎、模糊匹配、OCR 解析器、
-│                         # 世界地图 Dijkstra 路网、Agent 协议、DAG 加密同步与完整单测
+├── core-domain/          # 纯 JVM Kotlin：乱数/期望/固定成长规划引擎、模糊匹配、OCR 文本解析、
+│                         # 地图路网算法、Agent 协议、DAG 加密同步与单元测试
 ├── android-app/          # Android Jetpack Compose 客户端：双端自适应 UI、OpenGL ES 3.1 GPU 反推、
 │                         # ONNX Runtime PP-OCRv4、SQLite 离线资料库、多模型 AI 与 WebDAV 同步
 ├── tools/                # Python 离线资料构建管线（SQLite / WebP / 规则基线生成与校验）
 ├── .github/workflows/    # GitHub Actions 自动测试、构建与 Release 发布工作流
-└── docs/screenshots/     # 手机与平板端实机展示截图
+└── docs/screenshots/     # 手机与平板端实机/模拟器展示截图
 ```
 
 ---
 
-## 构建、自动化发布与开发
+## 本地构建与 GitHub Actions 自动发布
 
 ### 本地构建
 
-- **环境要求**：JDK 21 · Android SDK（`compileSdk 37` / `targetSdk 36`）· Python 3 + Pillow
-- **常用命令**：
+- **环境要求**：JDK 21 · Android SDK（`compileSdk 37` / `targetSdk 36`）· Python 3 + Pillow（若从原始 `data/` 重建资料包）
+- **使用预制离线资源包构建（无需本地 `data/`）**：
+  1. 从 GitHub Releases 的 [`assets-v1`](https://github.com/renyumeng1/fireemblem-wiki-app/releases/tag/assets-v1) 下载 `offline-assets-pack.zip` 并解压到任意目录（如 `./prebuilt-assets`）；
+  2. 执行：
+     ```bash
+     ./gradlew :core-domain:test :android-app:lintDebug :android-app:assembleDebug -PprebuiltAssetsDir=./prebuilt-assets
+     ```
 
-```bash
-# 运行领域层单元测试、Lint 静态检查与 Debug APK 构建
-./gradlew :core-domain:test :android-app:lintDebug :android-app:assembleDebug
+### GitHub Actions 自动构建发布与固定签名配置
 
-# 覆盖安装到已连接的 Android 手机/平板（保留个人数据）
-adb install -r -d android-app/build/outputs/apk/debug/android-app-debug.apk
-```
+仓库配置了 [`.github/workflows/release-apk.yml`](.github/workflows/release-apk.yml)，每次推送至 `main` 分支或推送 `v*` 标签都会自动运行单元测试、Lint、构建 APK 并发布至 GitHub Releases。
 
-### GitHub Actions 自动构建发布
-
-- 每次向主分支推送代码或打版本标签时，GitHub Actions 自动执行 `:core-domain:test` 单元测试、`:android-app:lintDebug` 检查、构建 APK 并自动发布至 **GitHub Releases**（支持配置正式签名 Keystore Secrets 输出正式签名 Release APK；未配置时自动输出可直接安装的构建版本与 SHA-256 校验文件）。
+> **关于覆盖安装「签名冲突」的说明**：
+> GitHub Actions 的 Linux 构建机每次运行都是全新临时环境，若未配置固定签名证书，Gradle 每次生成的临时 debug 证书指纹都不同，导致无法直接覆盖安装已有版本。
+>
+> 在仓库 **Settings → Secrets and variables → Actions** 中配置以下 **4 个 Repository Secrets** 即可开启固定签名自动发布（从此以后每次更新都能无缝覆盖安装、保留本机存档）：
+>
+> | Secret 名称 | 说明 |
+> | :--- | :--- |
+> | `ANDROID_KEYSTORE_BASE64` | Keystore 文件的 Base64 字符串 |
+> | `ANDROID_KEYSTORE_PASSWORD` | Keystore 密码 |
+> | `ANDROID_KEY_ALIAS` | 密钥别名（Alias） |
+> | `ANDROID_KEY_PASSWORD` | 密钥密码 |
 
 ---
 
 ## 功能规划（Roadmap）
 
 ### 已完成里程碑
-- [x] **v0.1**：《万缕千丝》全量离线图鉴、交互式世界地图与 Dijkstra 路径规划、全套日常攻略、多存档与端到端加密 WebDAV 同步。
-- [x] **v0.15**：OpenGL ES 3.1 GPU 极速种子反推、99 级养成工作台、四线多路线融合面板、端侧 PP-OCRv4 Switch 截图批量识别、《风花雪月》与《Engage》离线资料包接入。
-- [x] **v0.2**：战策参谋 Pi 风格多模型注册表与分轨记忆/压缩、全站模糊搜索与头像视觉筛选、阅读滚动位置还原、《万缕千丝》转职分档方案（前期门控 + `需考试解锁` + 一键导入角色个人规划）、《风花雪月》精确 2 点保底重抽与考证蹭保底规划、《Engage》固定成长推算器。
+- [x] **v0.1**：《万缕千丝》离线图鉴、基础离线世界地图、四线任务清单与日常攻略、多存档与端到端加密 WebDAV 同步。
+- [x] **v0.15**：GPU Compute Shader 乱数种子反推、99 级养成工作台、多线融合面板、端侧 PP-OCRv4 Switch 截图批量识别、接入《风花雪月》与《Engage》离线资料包。
+- [x] **v0.2**：战策参谋多模型分轨路由与自动记忆/压缩、全站模糊搜索与视觉头像筛选、阅读滚动位置还原、《万缕千丝》转职分档方案（前期门控 + `需考试解锁` + 一键导入角色个人培养计划）、《风花雪月》精确 2 点保底重抽与考证蹭保底规划、《Engage》固定成长推算器。
 
-### 后续演进方向
+### 后续演进计划
+- [ ] **完善世界地图功能**：补全剧情阶段封锁条件、点位与图鉴/任务/种植采集的双向联动、更直观的路线步骤列表与标记管理。
 - [ ] **《Engage》纹章士 & 继承技能配装联动**：结合内置 20 纹章士与 531 特技，规划 SP 预算、牵绊解锁顺序与武器刻印并接入战策参谋。
-- [ ] **《风花雪月》熟练度与周常教学排程**：联动每阶段职业武器/飞行门槛，估算指导周数与才能绽放节点。
-- [ ] **跨作 OCR 批量识图扩展**：将 Switch 端侧 OCR 批量识别扩展至《风花雪月》与《Engage》角色状态截图，一键导入对应规划器。
-- [ ] **WebDAV 增量同步与局域网快传**：提升多设备日常同步速度，新增同步状态提醒与一键定时备份。
-- [ ] **平板大屏深度增强**：支持外接键盘快捷键检索与双角色成长路线并排对比视图。
+- [ ] **《风花雪月》熟练度与周常教学排程**：联动每阶段职业技能门槛（如斧 A / 飞行 A），辅助规划指导进度与才能绽放。
+- [ ] **跨作 OCR 批量识图扩展**：将 Switch 端侧 OCR 批量识别扩展至《风花雪月》与《Engage》角色状态截图，直接导入对应规划器。
+- [ ] **WebDAV 增量同步与大屏体验增强**：优化多设备日常同步速度，新增双角色养成路线并排对比视图。
 
 ---
 

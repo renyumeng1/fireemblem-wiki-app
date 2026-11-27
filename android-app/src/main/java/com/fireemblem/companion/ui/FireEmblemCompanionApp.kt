@@ -96,7 +96,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -2038,41 +2040,95 @@ private fun PersonalScreen(archives: List<BuddyArchiveSummary>, store: AtomicBud
                 }
                 if (sourcesExpanded) {
                     SourceCard(
-                        title = "凹点算法与备份格式",
+                        title = "《万缕千丝》图鉴与攻略数据",
+                        source = "社区在线数据表 · KeenGamer · RaiderKing",
+                        details = listOf(
+                            "基础角色、职业、血印、技能、战技、魔法、武器装备、外传支线、坐骑军团、礼物料理、时间轴与挑战书数据整理自《火焰之纹章 万紫千红》社区在线数据表。",
+                            "逗鸟问答参考 KeenGamer 与 RaiderKing 的 Perfect Bird Time 攻略页（经社区在线表交叉核对）。",
+                        ),
+                        links = listOf(
+                            "腾讯文档《火焰之纹章 万紫千红》在线数据表" to "https://docs.qq.com/sheet/DV0N0VUZLSXRmUWFq?tab=lnafol",
+                            "KeenGamer" to "https://www.keengamer.com/",
+                            "RaiderKing" to "https://raiderking.com/",
+                        ),
+                    )
+                    SourceCard(
+                        title = "《万缕千丝》地图与专题资料",
+                        source = "fireemblem.top",
+                        details = listOf(
+                            "主线世界地图地形与路网点位（/api/world-map）、结局后日谈、种植收获、支援关系、19 类系统机制与成长公式、成长模拟器参考数据均整理自 fireemblem.top。",
+                        ),
+                        links = listOf(
+                            "fireemblem.top 首页" to "https://fireemblem.top/",
+                            "世界地图数据" to "https://fireemblem.top/api/world-map",
+                            "结局与后日谈" to "https://fireemblem.top/topics/endings",
+                            "种植与收获" to "https://fireemblem.top/database/planting",
+                            "支援关系" to "https://fireemblem.top/archive/supports",
+                            "机制与成长公式" to "https://fireemblem.top/archive/mechanics",
+                        ),
+                    )
+                    SourceCard(
+                        title = "《万缕千丝》乱数算法与备份格式参考",
                         source = "FE_Rigging_Buddy",
                         details = listOf(
                             "作者 GitHub：@kskdmcph58-lgtm",
-                            "固定基线提交：016f048b5c636035ac0b56b0c4b9d89a742fba4a",
-                            "已接入 Buddy JSON 备份、四线升级记录、反推种子与关联培养规划。",
+                            "参考提交：016f048b5c636035ac0b56b0c4b9d89a742fba4a",
+                            "参考其乱数种子反推、成长预测规则基线、Buddy 备份格式与角色头像索引；当前规则基线按「凯伊篇」与「其它路线」区分。",
+                        ),
+                        links = listOf(
+                            "FE_Rigging_Buddy GitHub 仓库" to "https://github.com/kskdmcph58-lgtm/FE_Rigging_Buddy",
                         ),
                     )
                     SourceCard(
-                        title = "站点资料",
-                        source = "fireemblem.top",
-                        details = listOf("站点资料与腾讯表格、算法规则分别管理；尚未取得的内容会明确标注。"),
-                    )
-                    SourceCard(
-                        title = "《火焰纹章：Engage》本地资料包",
-                        source = "本地工作簿转录 + Fire Emblem Wiki",
+                        title = "《火焰纹章：风花雪月》离线资料包",
+                        source = "Fire Emblem Wiki · Fandom · Serenes Forest · Fedatamine · 萌娘百科",
                         details = listOf(
-                            "章节索引整理自 Fire Emblem Wiki（GFDL 1.3）；角色、纹章士与索拉涅尔数据来自本地工作簿转录。",
-                            "社区特技评级标注为玩家主观观点；assets/app/ 图标与图像仅限本地离线对照使用。",
+                            "角色、职业、属性与成长率、武器装备、技能战技、骑士团、章节与修道院资料整理自 Fire Emblem Wiki（GFDL 1.3）。",
+                            "部分立绘与点阵素材参考 Fire Emblem Wiki (Fandom)；职业成长率与骑士团参考 Serenes Forest 交叉核对；简体中文支援对话参考 Fedatamine；部分中文译名参考萌娘百科（CC BY-NC-SA 4.0）。",
+                        ),
+                        links = listOf(
+                            "Fire Emblem Wiki (fireemblemwiki.org)" to "https://fireemblemwiki.org/",
+                            "Fire Emblem Wiki (Fandom)" to "https://fireemblem.fandom.com/",
+                            "Serenes Forest (Three Houses)" to "https://serenesforest.net/three-houses/",
+                            "Fedatamine (简体中文支援)" to "https://houses.fedatamine.com/zh-cn/supports/",
+                            "萌娘百科 · 火焰之纹章 风花雪月" to "https://zh.moegirl.org.cn/%E7%81%AB%E7%84%B0%E4%B9%8B%E7%BA%B9%E7%AB%A0_%E9%A3%8E%E8%8A%B1%E9%9B%AA%E6%9C%88",
                         ),
                     )
                     SourceCard(
-                        title = "《火焰纹章：风花雪月》本地资料包",
-                        source = "Fire Emblem Wiki + 社区参考 + Fandom 本地副本",
+                        title = "《火焰纹章：Engage》离线资料包",
+                        source = "社区在线数据表 · Fire Emblem Wiki",
                         details = listOf(
-                            "主体条目依据 Fire Emblem Wiki（GFDL 1.3）；41 条简体译名参考萌娘百科并遵循 CC BY-NC-SA 4.0（署名-非商业性使用-相同方式共享）。",
-                            "Serenes Forest 职业成长对照仅作数值参考；未经独立复核的条目标注为 source_only（仅来源摘录）。",
-                            "493 项人物头像与兵种点阵采自 Fire Emblem Fandom（no_reuse_grant_verified），仅限个人本地离线查阅，不授权公开再分发。",
+                            "角色、职业基础值/成长率/上限、纹章士、牵绊戒指、特技、武器装备、索拉涅尔活动与成就数据整理自《火焰之纹章 ENGAGE结合》社区在线数据表。",
+                            "章节索引与部分图标资源参考 Fire Emblem Wiki（GFDL 1.3）。",
+                        ),
+                        links = listOf(
+                            "Fire Emblem Wiki · Engage 章节列表" to "https://fireemblemwiki.org/wiki/List_of_chapters_in_Fire_Emblem_Engage",
                         ),
                     )
                     SourceCard(
-                        title = "游戏与美术权利",
-                        source = "权利范围说明",
+                        title = "端侧 OCR 模型与核心开源组件",
+                        source = "RapidOCR / PaddleOCR PP-OCRv4 · ONNX Runtime · OkHttp · Anthropic SDK",
                         details = listOf(
-                            "游戏名称、角色设定、游戏画面及美术素材的权利仍归原权利方。算法或站点资料的授权不包含游戏素材授权。",
+                            "本地 OCR 采用 RapidOCR / PaddleOCR PP-OCRv4 移动端中文 ONNX 模型，由用户在设置中按需下载（带 SHA-256 校验），不随安装包预装。",
+                            "客户端基于 Jetpack Compose、Material 3、ONNX Runtime Android、OkHttp 与 Anthropic Java SDK 构建。",
+                        ),
+                        links = listOf(
+                            "RapidOCR 模型 (ModelScope)" to "https://www.modelscope.cn/models/RapidAI/RapidOCR",
+                            "RapidOCR 模型 (Hugging Face)" to "https://huggingface.co/RapidAI/RapidOCR",
+                            "ONNX Runtime" to "https://github.com/microsoft/onnxruntime",
+                            "OkHttp" to "https://github.com/square/okhttp",
+                            "Anthropic Java SDK" to "https://github.com/anthropics/anthropic-sdk-java",
+                        ),
+                    )
+                    SourceCard(
+                        title = "权利归属与免责声明",
+                        source = "非官方个人伴侣工具",
+                        details = listOf(
+                            "本项目为个人学习与游玩辅助用途的非商业工具，与任天堂、Intelligent Systems 及上述各网站无隶属关系。",
+                            "游戏名称、角色设定、数值、立绘、地图与社区攻略资料的权利均归原版权方及原作者所有；如有侵权或异议请通过 GitHub 仓库 Issue 联系删除。",
+                        ),
+                        links = listOf(
+                            "本项目 GitHub 仓库" to "https://github.com/renyumeng1/fireemblem-wiki-app",
                         ),
                     )
                 }
@@ -2254,25 +2310,66 @@ private fun UnavailableCategory(label: String) {
 }
 
 @Composable
-private fun SourceCard(title: String, source: String, details: List<String>) {
+private fun SourceCard(
+    title: String,
+    source: String,
+    details: List<String>,
+    links: List<Pair<String, String>> = emptyList(),
+) {
+    val uriHandler = LocalUriHandler.current
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(source, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            Text(source, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             details.forEach { detail ->
                 Text(
                     detail,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = if (detail.startsWith("固定基线提交：")) FontFamily.Monospace else FontFamily.Default,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontFamily = if (detail.startsWith("参考提交：")) FontFamily.Monospace else FontFamily.Default,
                     ),
                 )
+            }
+            if (links.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 4.dp)) {
+                    links.forEach { (label, url) ->
+                        Surface(
+                            onClick = { runCatching { uriHandler.openUri(url) } },
+                            shape = RoundedCornerShape(10.dp),
+                            color = MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Column(
+                                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Text(
+                                    label,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                Text(
+                                    url,
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        textDecoration = TextDecoration.Underline,
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
