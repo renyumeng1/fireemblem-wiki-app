@@ -128,6 +128,43 @@ class GameDataV1RepositoryTest {
             assertTrue(asheWiki.supportPartners.isNotEmpty())
             assertTrue(asheWiki.likedGifts.isNotEmpty())
             assertTrue(asheWiki.likedMeals.isNotEmpty())
+            assertEquals(2, asheWiki.lectureQuestions.size)
+            assertTrue(asheWiki.lectureQuestions.all { q -> q.options.any { it.recommended && it.askerLikes } })
+            assertNotNull(asheWiki.teaParty)
+            assertTrue(requireNotNull(asheWiki.teaParty).favoriteTeas.isNotEmpty())
+            assertTrue(requireNotNull(asheWiki.teaParty).finalComments.size >= 9)
+            assertTrue(edelgardDetail.characterWiki?.lectureQuestions?.size == 2)
+            assertTrue(edelgardDetail.characterWiki?.adviceQuestions?.isNotEmpty() == true)
+            assertTrue(edelgardDetail.characterWiki?.lostItems?.isNotEmpty() == true)
+
+            val dlcChecks = listOf("尤里斯", "巴鲁塔札尔", "康丝坦洁", "哈琵", "伊艾里扎", "安娜")
+            dlcChecks.forEach { namePrefix ->
+                val dlcSummary = characters.entries.first { it.title.startsWith(namePrefix) }
+                val dlcWiki = requireNotNull(requireNotNull(repo.entry(dlcSummary.id)).characterWiki)
+                val expectedLectures = if (namePrefix == "伊艾里扎") 0 else 2
+                assertEquals(expectedLectures, dlcWiki.lectureQuestions.size)
+                val tp = requireNotNull(dlcWiki.teaParty)
+                assertTrue(tp.favoriteTeas.isNotEmpty())
+                assertTrue(tp.interestedTopics.isNotEmpty())
+                if (namePrefix == "康丝坦洁") {
+                    assertEquals(18, tp.finalComments.size)
+                    assertEquals(9, tp.finalComments.count { it.variant == "室内（日光外）" })
+                    assertEquals(9, tp.finalComments.count { it.variant == "室外（日光下）" })
+                } else {
+                    assertTrue(tp.finalComments.size >= 9)
+                }
+            }
+
+            val socialFilters = repo.filterOptions("social")
+            assertTrue(socialFilters.any { it.value == "atype:茶会指南" && it.count == 40 })
+            val teaEntries = repo.page(GamePackPageRequest(categoryId = "social", filterGroup = "atype:茶会指南", limit = 50))
+            assertEquals(40, teaEntries.totalMatches)
+            assertTrue(teaEntries.entries.all { it.imageAsset != null })
+            val rheaTea = requireNotNull(repo.entry("social:tea-guide-rhea"))
+            assertNotNull(rheaTea.summary.imageAsset)
+            val rheaGuide = requireNotNull(rheaTea.teaPartyGuide)
+            assertTrue(rheaGuide.favoriteTeas.isNotEmpty())
+            assertTrue(rheaGuide.finalComments.size >= 9)
             assertNotNull(repo.statBenchmarks.evaluate(StatMetricKind.GROWTH_RATE, "速度", "50%"))
             assertNotNull(repo.statBenchmarks.evaluate(StatMetricKind.BASE_STAT, "HP", "23"))
             assertTrue(repo.filterOptions("classes").isNotEmpty())

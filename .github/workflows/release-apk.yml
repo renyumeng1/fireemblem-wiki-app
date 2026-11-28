@@ -69,13 +69,19 @@ jobs:
               echo "${ASSETS_PACK_SHA256}  ${PACK_DIR}/offline-assets-pack.zip" | sha256sum -c -
             fi
           else
-            if ! gh release view assets-v1 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-              echo "Release assets-v1 not found; checking bootstrap branch assets-pack..."
-              if git ls-remote --exit-code --heads origin assets-pack >/dev/null 2>&1; then
-                git fetch origin assets-pack:refs/remotes/origin/assets-pack --depth=1
-                git show origin/assets-pack:offline-assets-pack.zip > "${PACK_DIR}/offline-assets-pack.zip"
-                git show origin/assets-pack:offline-assets-pack.sha256 > "${PACK_DIR}/offline-assets-pack.sha256"
-                (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+            if git ls-remote --exit-code --heads origin assets-pack >/dev/null 2>&1; then
+              echo "Found bootstrap/refresh branch assets-pack; syncing release assets-v1..."
+              git fetch origin assets-pack:refs/remotes/origin/assets-pack --depth=1
+              git show origin/assets-pack:offline-assets-pack.zip > "${PACK_DIR}/offline-assets-pack.zip"
+              git show origin/assets-pack:offline-assets-pack.sha256 > "${PACK_DIR}/offline-assets-pack.sha256"
+              (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+              if gh release view assets-v1 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+                gh release upload assets-v1 \
+                  "${PACK_DIR}/offline-assets-pack.zip" \
+                  "${PACK_DIR}/offline-assets-pack.sha256" \
+                  --repo "${GITHUB_REPOSITORY}" \
+                  --clobber
+              else
                 gh release create assets-v1 \
                   "${PACK_DIR}/offline-assets-pack.zip" \
                   "${PACK_DIR}/offline-assets-pack.sha256" \
@@ -84,13 +90,10 @@ jobs:
                   --prerelease \
                   --title "Offline Assets Pack (v1)" \
                   --notes "Prebuilt offline SQLite databases, world map, and WebP assets for CI APK builds. Main Git branch remains pure source code."
-                echo "Cleaning up temporary bootstrap branch assets-pack..."
-                git push origin --delete assets-pack || true
-              else
-                echo "::error::Missing offline assets! Upload offline-assets-pack.zip to release 'assets-v1' or set secret ASSETS_PACK_URL."
-                exit 1
               fi
-            else
+              echo "Cleaning up temporary transport branch assets-pack..."
+              git push origin --delete assets-pack || true
+            elif gh release view assets-v1 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
               echo "Downloading offline assets pack from release assets-v1..."
               gh release download assets-v1 \
                 --repo "${GITHUB_REPOSITORY}" \
@@ -99,6 +102,9 @@ jobs:
               if [[ -f "${PACK_DIR}/offline-assets-pack.sha256" ]]; then
                 (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
               fi
+            else
+              echo "::error::Missing offline assets! Upload offline-assets-pack.zip to release 'assets-v1' or set secret ASSETS_PACK_URL."
+              exit 1
             fi
           fi
 
@@ -210,7 +216,7 @@ jobs:
             echo "- **构建类型**：\`${VARIANT}\`（可直接覆盖安装至 Android 8.0+ 手机/平板，保留本地个人数据）"
             echo "- **提交哈希**：\`${SHORT_SHA}\`"
             echo "- **包含验证**：\`:core-domain:test\` 单元测试通过 + \`:android-app:lintDebug\` 静态检查通过"
-            echo "- **内置离线资料包**：《万缕千丝》/《风花雪月》/《Engage》三作 SQLite + 世界地图 + 本地 WebP 立绘"
+            echo "- **内置离线资料包**：《万缕千丝》/《风花雪月》（含全 40 名角色茶会答案含 DLC 与蕾雅、课堂教导问答与烦恼信箱）/《Engage》三作 SQLite + 世界地图 + 本地 WebP 立绘"
             echo ""
             echo "### SHA-256 校验"
             echo '```text'

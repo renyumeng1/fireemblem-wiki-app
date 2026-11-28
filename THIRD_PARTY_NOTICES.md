@@ -14,7 +14,8 @@ This document lists the third-party repositories, community websites, models, an
 - **Fire Emblem Wiki**: https://fireemblemwiki.org/ (GNU Free Documentation License 1.3 unless page-specific notices state otherwise) — structured tables for characters, classes, skills, combat arts, magic, weapons, items, crests, battalions, chapters, supports, gifts, dining hall, tea party, and monastery activities.
 - **Fire Emblem Wiki (Fandom)**: https://fireemblem.fandom.com/ — selected character portraits and icons.
 - **Serenes Forest**: https://serenesforest.net/three-houses/ — cross-check reference for class growth rates and battalions.
-- **Fedatamine**: https://houses.fedatamine.com/zh-cn/supports/ — Simplified Chinese support dialogue text.
+- **Fedatamine**: https://houses.fedatamine.com/zh-cn/ — Simplified Chinese support dialogue, classroom lecture Q&A, advice box Q&A, lost items, and tea party topics/final comments.
+- **Samurai Gamers**: https://samurai-gamers.com/fire-emblem-three-houses/ — 4th-round Tea Party valid reaction answers across all base and DLC characters (including Constance indoor/outdoor variants).
 - **Moegirlpedia (萌娘百科)**: https://zh.moegirl.org.cn/火焰之纹章_风花雪月 (CC BY-NC-SA 4.0) — Simplified Chinese terminology reference.
 
 ### Fire Emblem Engage (《火焰纹章：Engage（结合）》)

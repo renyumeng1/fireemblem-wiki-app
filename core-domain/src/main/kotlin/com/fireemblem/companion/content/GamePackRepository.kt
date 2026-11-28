@@ -171,6 +171,64 @@ data class GamePackCharacterWikiData(
     val dislikedGifts: List<GamePackPreferenceItem> = emptyList(),
     val likedMeals: List<GamePackPreferenceItem> = emptyList(),
     val dislikedMeals: List<GamePackPreferenceItem> = emptyList(),
+    val lectureQuestions: List<GamePackLectureQuestion> = emptyList(),
+    val teaParty: GamePackTeaPartyGuide? = null,
+    val adviceQuestions: List<GamePackAdviceQuestion> = emptyList(),
+    val lostItems: List<GamePackLostItem> = emptyList(),
+)
+
+data class GamePackLectureReaction(
+    val actor: String,
+    val sentiment: String,
+    val sentimentZh: String,
+)
+
+data class GamePackLectureOption(
+    val text: String,
+    val recommended: Boolean,
+    val askerLikes: Boolean,
+    val reactions: List<GamePackLectureReaction> = emptyList(),
+)
+
+data class GamePackLectureQuestion(
+    val part: String,
+    val companions: List<String> = emptyList(),
+    val question: String,
+    val options: List<GamePackLectureOption> = emptyList(),
+)
+
+data class GamePackTeaFinalComment(
+    val commentZh: String,
+    val commentEn: String = "",
+    val validAnswers: List<String>,
+    val variant: String? = null,
+)
+
+data class GamePackTeaPartyGuide(
+    val characterName: String? = null,
+    val affiliation: String? = null,
+    val isDlcOrPatch: Boolean = false,
+    val favoriteTeas: List<String> = emptyList(),
+    val interestedTopics: List<String> = emptyList(),
+    val blushLikedTopics: List<String> = emptyList(),
+    val blushDislikedTopics: List<String> = emptyList(),
+    val finalComments: List<GamePackTeaFinalComment> = emptyList(),
+)
+
+data class GamePackAdviceOption(
+    val text: String,
+    val isBest: Boolean,
+)
+
+data class GamePackAdviceQuestion(
+    val part: String,
+    val question: String,
+    val options: List<GamePackAdviceOption> = emptyList(),
+)
+
+data class GamePackLostItem(
+    val name: String,
+    val clue: String,
 )
 
 data class SupportDialogueLine(
@@ -192,6 +250,7 @@ data class GamePackEntryDetail(
     val images: List<GamePackImage> = emptyList(),
     val characterWiki: GamePackCharacterWikiData? = null,
     val supportConversations: List<SupportRankConversation> = emptyList(),
+    val teaPartyGuide: GamePackTeaPartyGuide? = null,
 )
 
 interface GamePackRepository : AutoCloseable {

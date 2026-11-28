@@ -2081,16 +2081,18 @@ private fun PersonalScreen(archives: List<BuddyArchiveSummary>, store: AtomicBud
                     )
                     SourceCard(
                         title = "《火焰纹章：风花雪月》离线资料包",
-                        source = "Fire Emblem Wiki · Fandom · Serenes Forest · Fedatamine · 萌娘百科",
+                        source = "Fire Emblem Wiki · Fandom · Serenes Forest · Fedatamine · Samurai Gamers · 萌娘百科",
                         details = listOf(
                             "角色、职业、属性与成长率、武器装备、技能战技、骑士团、章节与修道院资料整理自 Fire Emblem Wiki（GFDL 1.3）。",
-                            "部分立绘与点阵素材参考 Fire Emblem Wiki (Fandom)；职业成长率与骑士团参考 Serenes Forest 交叉核对；简体中文支援对话参考 Fedatamine；部分中文译名参考萌娘百科（CC BY-NC-SA 4.0）。",
+                            "部分立绘与点阵素材参考 Fire Emblem Wiki (Fandom)；职业成长率与骑士团参考 Serenes Forest 交叉核对。",
+                            "官方简体中文支援对话、课堂教导问答、烦恼信箱、失物与茶会主题/对话参考 Fedatamine；茶会第 4 轮应答答案参考 Samurai Gamers；部分中文译名参考萌娘百科（CC BY-NC-SA 4.0）。",
                         ),
                         links = listOf(
                             "Fire Emblem Wiki (fireemblemwiki.org)" to "https://fireemblemwiki.org/",
                             "Fire Emblem Wiki (Fandom)" to "https://fireemblem.fandom.com/",
                             "Serenes Forest (Three Houses)" to "https://serenesforest.net/three-houses/",
-                            "Fedatamine (简体中文支援)" to "https://houses.fedatamine.com/zh-cn/supports/",
+                            "Fedatamine (简体中文资料)" to "https://houses.fedatamine.com/zh-cn/",
+                            "Samurai Gamers (Tea Party)" to "https://samurai-gamers.com/fire-emblem-three-houses/",
                             "萌娘百科 · 火焰之纹章 风花雪月" to "https://zh.moegirl.org.cn/%E7%81%AB%E7%84%B0%E4%B9%8B%E7%BA%B9%E7%AB%A0_%E9%A3%8E%E8%8A%B1%E9%9B%AA%E6%9C%88",
                         ),
                     )

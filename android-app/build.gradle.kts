@@ -270,6 +270,10 @@ abstract class GenerateMultiGameAssets @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val threeHousesSupportsZh: RegularFileProperty
 
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val threeHousesAcademySocialZh: RegularFileProperty
+
     @get:Input
     abstract val gamesRootPath: Property<String>
 
@@ -309,6 +313,7 @@ val generateMultiGameAssets = tasks.register<GenerateMultiGameAssets>("generateM
     threeHousesClassesComplete.set(rootProject.layout.projectDirectory.file("data/games/three-houses/sources/extracts/three-houses-classes-complete.json"))
     threeHousesBattalionsComplete.set(rootProject.layout.projectDirectory.file("data/games/three-houses/sources/extracts/three-houses-battalions-complete.json"))
     threeHousesSupportsZh.set(rootProject.layout.projectDirectory.file("data/games/three-houses/sources/extracts/three-houses-supports-zh.json"))
+    threeHousesAcademySocialZh.set(rootProject.layout.projectDirectory.file("data/games/three-houses/sources/extracts/three-houses-academy-social-zh.json"))
     gamesRootPath.set(rootProject.layout.projectDirectory.dir("data/games").asFile.absolutePath)
     pythonCommand.set(if (System.getProperty("os.name").startsWith("Windows")) listOf("py", "-3") else listOf("python3"))
     outputDirectory.set(layout.buildDirectory.dir("generated/multi-game-assets"))

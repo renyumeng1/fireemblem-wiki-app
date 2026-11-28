@@ -83,6 +83,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fireemblem.companion.content.CompanionGame
+import com.fireemblem.companion.content.GamePackAdviceQuestion
 import com.fireemblem.companion.content.GamePackCategory
 import com.fireemblem.companion.content.GamePackCharacterWikiData
 import com.fireemblem.companion.content.GamePackDetailField
@@ -90,11 +91,14 @@ import com.fireemblem.companion.content.GamePackDetailSection
 import com.fireemblem.companion.content.GamePackEntryDetail
 import com.fireemblem.companion.content.GamePackEntrySummary
 import com.fireemblem.companion.content.GamePackFilterOption
+import com.fireemblem.companion.content.GamePackLectureQuestion
+import com.fireemblem.companion.content.GamePackLostItem
 import com.fireemblem.companion.content.GamePackPage
 import com.fireemblem.companion.content.GamePackPageRequest
 import com.fireemblem.companion.content.GamePackPreferenceItem
 import com.fireemblem.companion.content.GamePackRepository
 import com.fireemblem.companion.content.GamePackSocialPartner
+import com.fireemblem.companion.content.GamePackTeaPartyGuide
 import com.fireemblem.companion.content.GameStatBenchmarks
 import com.fireemblem.companion.content.StatMetricKind
 import com.fireemblem.companion.content.StatRatingTier
@@ -628,6 +632,7 @@ private fun GamePackFilterBar(
         categoryId == "skills" -> "按技能类型筛选"
         categoryId == "equipment" || categoryId == "weapons" -> "按武器 / 魔法分类筛选"
         categoryId == "chapters" || categoryId == "battles" -> "按路线 / 篇章筛选"
+        categoryId == "social" -> "按活动类型筛选"
         else -> "按分类筛选"
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -810,6 +815,11 @@ private fun GamePackDetailLoaderPane(
                     )
                 }
             }
+            current.teaPartyGuide?.let { teaGuide ->
+                item(key = "tea-party-guide") {
+                    GamePackTeaPartyCard(guide = teaGuide)
+                }
+            }
             if (current.images.size > 1 && !(current.summary.categoryId == "supports" && current.images.size <= 2)) {
                 item { GamePackGalleryCard(current) }
             }
@@ -837,13 +847,18 @@ private fun GamePackCharacterWikiHub(
         wiki.likedGifts.isNotEmpty() ||
         wiki.dislikedGifts.isNotEmpty() ||
         wiki.likedMeals.isNotEmpty() ||
-        wiki.dislikedMeals.isNotEmpty()
+        wiki.dislikedMeals.isNotEmpty() ||
+        wiki.lostItems.isNotEmpty()
+    val hasAcademy = wiki.lectureQuestions.isNotEmpty() ||
+        wiki.teaParty != null ||
+        wiki.adviceQuestions.isNotEmpty()
 
-    val tabs = remember(hasSkills, hasSocial, game) {
+    val tabs = remember(hasSkills, hasSocial, hasAcademy, game) {
         buildList {
             add("overview" to "基础信息")
             if (hasSkills) add("skills" to if (game == CompanionGame.ENGAGE) "技能与资质" else "可学技能")
             if (hasSocial) add("social" to "好感与支援")
+            if (hasAcademy) add("academy" to "教导与茶会")
             add("archive" to "立绘与档案")
         }
     }
@@ -1277,6 +1292,29 @@ private fun GamePackCharacterWikiHub(
                         )
                     }
                 }
+                if (wiki.lostItems.isNotEmpty()) {
+                    item(key = "char-lost-items") {
+                        GamePackLostItemsCard(items = wiki.lostItems)
+                    }
+                }
+            }
+
+            "academy" -> {
+                if (wiki.lectureQuestions.isNotEmpty()) {
+                    item(key = "char-lecture-questions") {
+                        GamePackLectureQuestionsCard(questions = wiki.lectureQuestions)
+                    }
+                }
+                wiki.teaParty?.let { tea ->
+                    item(key = "char-tea-party") {
+                        GamePackTeaPartyCard(guide = tea)
+                    }
+                }
+                if (wiki.adviceQuestions.isNotEmpty()) {
+                    item(key = "char-advice-box") {
+                        GamePackAdviceBoxCard(questions = wiki.adviceQuestions)
+                    }
+                }
             }
 
             "archive" -> {
@@ -1284,7 +1322,7 @@ private fun GamePackCharacterWikiHub(
                     item(key = "char-gallery") { GamePackGalleryCard(detail) }
                 }
                 val nonSocialRelations = detail.relations.filterNot { rel ->
-                    rel.relationType in setOf("支援对象", "喜欢的礼物", "不喜欢的礼物", "喜欢的料理", "不喜欢的料理")
+                    rel.relationType in setOf("支援对象", "喜欢的礼物", "不喜欢的礼物", "喜欢的料理", "不喜欢的料理", "茶会指南")
                 }
                 if (nonSocialRelations.isNotEmpty()) {
                     item(key = "char-relations") {
@@ -1436,6 +1474,478 @@ private fun GamePackPreferencesCard(
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GamePackLectureQuestionsCard(
+    questions: List<GamePackLectureQuestion>,
+) {
+    val highPal = statTierPalette(StatRatingTier.HIGH)
+    val lowPal = statTierPalette(StatRatingTier.LOW)
+    EditorialCard(modifier = Modifier.fillMaxWidth().testTag("character-lecture-questions")) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("课堂教导问答", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                EditorialBadge(text = "${questions.size} 问")
+            }
+            Text(
+                "每周教导课程触发学生提问时的选项与各方反应，标有「推荐答案」的选项可获得提问者好感与干劲回复。",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            questions.forEachIndexed { idx, q ->
+                if (idx > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        EditorialBadge(text = q.part)
+                        if (q.companions.isNotEmpty()) {
+                            Text(
+                                "同席：${q.companions.joinToString("、")}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    Text(
+                        q.question,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        q.options.forEach { opt ->
+                            val isBest = opt.recommended || opt.askerLikes
+                            val container = if (isBest) highPal.container else MaterialTheme.colorScheme.surfaceContainerLow
+                            val border = if (isBest) BorderStroke(1.dp, highPal.bar.copy(alpha = 0.5f)) else null
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = container,
+                                border = border,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Column(
+                                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp),
+                                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                                ) {
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            opt.text,
+                                            modifier = Modifier.weight(1f),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = if (isBest) FontWeight.SemiBold else FontWeight.Normal,
+                                            color = if (isBest) highPal.content else MaterialTheme.colorScheme.onSurface,
+                                        )
+                                        if (isBest) {
+                                            Spacer(Modifier.width(8.dp))
+                                            EditorialBadge(
+                                                text = "推荐答案",
+                                                containerColor = highPal.bar.copy(alpha = 0.16f),
+                                                contentColor = highPal.content,
+                                            )
+                                        }
+                                    }
+                                    if (opt.reactions.isNotEmpty()) {
+                                        FlowRow(
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                                        ) {
+                                            opt.reactions.forEach { react ->
+                                                val like = react.sentiment.equals("Like", ignoreCase = true)
+                                                val pal = if (like) highPal else lowPal
+                                                Surface(
+                                                    shape = RoundedCornerShape(100.dp),
+                                                    color = pal.container,
+                                                    contentColor = pal.content,
+                                                    border = BorderStroke(1.dp, pal.bar.copy(alpha = 0.35f)),
+                                                ) {
+                                                    Text(
+                                                        "${react.actor}：${react.sentimentZh}",
+                                                        Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GamePackTeaPartyCard(
+    guide: GamePackTeaPartyGuide,
+) {
+    val highPal = statTierPalette(StatRatingTier.HIGH)
+    val elitePal = statTierPalette(StatRatingTier.MEDIUM)
+    val lowPal = statTierPalette(StatRatingTier.LOW)
+    var search by rememberSaveable(guide.characterName ?: "", guide.finalComments.size) { mutableStateOf("") }
+    var showAllTopics by rememberSaveable(guide.characterName ?: "", guide.interestedTopics.size) { mutableStateOf(false) }
+
+    val variants = remember(guide.finalComments) {
+        guide.finalComments.mapNotNull { it.variant }.distinct()
+    }
+    var selectedVariant by rememberSaveable(guide.characterName ?: "", variants.size) {
+        mutableStateOf(variants.firstOrNull() ?: "")
+    }
+
+    val normalizedQuery = search.trim()
+    val filteredComments = remember(guide.finalComments, variants, selectedVariant, normalizedQuery) {
+        guide.finalComments.filter { fc ->
+            val variantOk = variants.isEmpty() || selectedVariant.isBlank() || fc.variant == selectedVariant
+            val queryOk = normalizedQuery.isEmpty() ||
+                fc.commentZh.contains(normalizedQuery, ignoreCase = true) ||
+                fc.commentEn.contains(normalizedQuery, ignoreCase = true) ||
+                fc.validAnswers.any { it.contains(normalizedQuery, ignoreCase = true) }
+            variantOk && queryOk
+        }
+    }
+    val filteredTopics = remember(guide.interestedTopics, normalizedQuery) {
+        if (normalizedQuery.isEmpty()) {
+            guide.interestedTopics
+        } else {
+            guide.interestedTopics.filter { it.contains(normalizedQuery, ignoreCase = true) }
+        }
+    }
+
+    EditorialCard(modifier = Modifier.fillMaxWidth().testTag("character-tea-party")) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("茶会完整答案", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    if (guide.isDlcOrPatch) {
+                        EditorialBadge(text = "DLC / 更新角色")
+                    }
+                    EditorialBadge(text = "终轮 ${guide.finalComments.size} 句")
+                }
+            }
+
+            OutlinedTextField(
+                value = search,
+                onValueChange = { search = it },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+                placeholder = { Text("输入台词关键词或话题名称快速筛查…") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            )
+
+            if (guide.favoriteTeas.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("最爱茶叶（+1 好感 / 魅力加成）", style = MaterialTheme.typography.titleSmall, color = elitePal.content)
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        guide.favoriteTeas.forEach { tea ->
+                            Surface(
+                                shape = RoundedCornerShape(100.dp),
+                                color = elitePal.container,
+                                contentColor = elitePal.content,
+                                border = BorderStroke(1.dp, elitePal.bar.copy(alpha = 0.4f)),
+                            ) {
+                                Text(
+                                    tea,
+                                    Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (guide.blushLikedTopics.isNotEmpty() || guide.blushDislikedTopics.isNotEmpty()) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("第 1~3 轮：脸红特写话题反应", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                    if (guide.blushLikedTopics.isNotEmpty()) {
+                        Text("脸红 · 喜欢", style = MaterialTheme.typography.labelMedium, color = highPal.content)
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            guide.blushLikedTopics.forEach { topic ->
+                                Surface(
+                                    shape = RoundedCornerShape(100.dp),
+                                    color = highPal.container,
+                                    contentColor = highPal.content,
+                                    border = BorderStroke(1.dp, highPal.bar.copy(alpha = 0.35f)),
+                                ) {
+                                    Text(
+                                        topic,
+                                        Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if (guide.blushDislikedTopics.isNotEmpty()) {
+                        Text("脸红 · 讨厌（慎选）", style = MaterialTheme.typography.labelMedium, color = lowPal.content)
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            guide.blushDislikedTopics.forEach { topic ->
+                                Surface(
+                                    shape = RoundedCornerShape(100.dp),
+                                    color = lowPal.container,
+                                    contentColor = lowPal.content,
+                                    border = BorderStroke(1.dp, lowPal.bar.copy(alpha = 0.35f)),
+                                ) {
+                                    Text(
+                                        topic,
+                                        Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (filteredTopics.isNotEmpty()) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "感兴趣的话题（共 ${filteredTopics.size} 项）",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        if (filteredTopics.size > 16 && normalizedQuery.isEmpty()) {
+                            TextButton(
+                                onClick = { showAllTopics = !showAllTopics },
+                                modifier = Modifier.heightIn(min = 48.dp),
+                            ) {
+                                Text(if (showAllTopics) "收起部分" else "展开全部 ${filteredTopics.size} 项")
+                            }
+                        }
+                    }
+                    val visibleTopics = if (showAllTopics || normalizedQuery.isNotEmpty()) {
+                        filteredTopics
+                    } else {
+                        filteredTopics.take(16)
+                    }
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        visibleTopics.forEach { topic ->
+                            Surface(
+                                shape = RoundedCornerShape(100.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            ) {
+                                Text(
+                                    topic,
+                                    Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    "第 4 轮最终对话与正确反应",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                if (variants.isNotEmpty()) {
+                    Row(
+                        Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        variants.forEach { variant ->
+                            val selected = selectedVariant == variant
+                            Surface(
+                                onClick = { selectedVariant = variant },
+                                modifier = Modifier.heightIn(min = 48.dp),
+                                shape = RoundedCornerShape(100.dp),
+                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                                contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                border = BorderStroke(
+                                    1.dp,
+                                    if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                                ),
+                            ) {
+                                Box(Modifier.padding(horizontal = 14.dp, vertical = 12.dp), contentAlignment = Alignment.Center) {
+                                    Text(variant, style = MaterialTheme.typography.labelLarge)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (filteredComments.isEmpty()) {
+                    Text(
+                        "未匹配到包含“$normalizedQuery”的最终对话。",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else {
+                    filteredComments.forEach { fc ->
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Column(
+                                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                Text(
+                                    fc.commentZh,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                                ) {
+                                    fc.validAnswers.forEach { ans ->
+                                        Surface(
+                                            shape = RoundedCornerShape(100.dp),
+                                            color = highPal.container,
+                                            contentColor = highPal.content,
+                                            border = BorderStroke(1.dp, highPal.bar.copy(alpha = 0.4f)),
+                                        ) {
+                                            Text(
+                                                "推荐反应：$ans",
+                                                Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                                style = MaterialTheme.typography.labelMedium,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GamePackAdviceBoxCard(
+    questions: List<GamePackAdviceQuestion>,
+) {
+    val highPal = statTierPalette(StatRatingTier.HIGH)
+    EditorialCard(modifier = Modifier.fillMaxWidth().testTag("character-advice-box")) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("烦恼信箱投书答案", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                EditorialBadge(text = "${questions.size} 封")
+            }
+            questions.forEachIndexed { idx, aq ->
+                if (idx > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    EditorialBadge(text = aq.part)
+                    Text(
+                        aq.question,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    aq.options.forEach { opt ->
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = if (opt.isBest) highPal.container else MaterialTheme.colorScheme.surfaceContainerLow,
+                            border = if (opt.isBest) BorderStroke(1.dp, highPal.bar.copy(alpha = 0.4f)) else null,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Row(
+                                Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    opt.text,
+                                    Modifier.weight(1f),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (opt.isBest) highPal.content else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                if (opt.isBest) {
+                                    Spacer(Modifier.width(8.dp))
+                                    EditorialBadge(
+                                        text = "正确答案",
+                                        containerColor = highPal.bar.copy(alpha = 0.16f),
+                                        contentColor = highPal.content,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GamePackLostItemsCard(
+    items: List<GamePackLostItem>,
+) {
+    EditorialCard(modifier = Modifier.fillMaxWidth().testTag("character-lost-items")) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("失物归属", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                EditorialBadge(text = "${items.size} 件")
+            }
+            items.forEach { li ->
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(Modifier.fillMaxWidth().padding(11.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(li.name, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
+                        if (li.clue.isNotBlank()) {
+                            Text(li.clue, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }

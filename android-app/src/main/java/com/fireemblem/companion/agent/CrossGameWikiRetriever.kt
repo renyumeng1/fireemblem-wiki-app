@@ -331,6 +331,56 @@ class CrossGameWikiRetriever(
                     if (cw.likedMeals.isNotEmpty()) {
                         sb.appendLine("- 喜欢的料理：${cw.likedMeals.take(8).joinToString("、") { it.name }}")
                     }
+                    if (cw.lectureQuestions.isNotEmpty()) {
+                        sb.appendLine("- 课堂教导问答：")
+                        cw.lectureQuestions.forEach { q ->
+                            val rec = q.options.filter { it.recommended }.joinToString(" / ") { it.text }
+                            sb.appendLine("  * [${q.part}] ${q.question.take(80)} -> 推荐：${rec.ifBlank { q.options.firstOrNull()?.text.orEmpty() }}")
+                        }
+                    }
+                    if (cw.adviceQuestions.isNotEmpty()) {
+                        sb.appendLine("- 烦恼信箱最佳答案：${cw.adviceQuestions.take(4).joinToString("；") { aq ->
+                            val best = aq.options.firstOrNull { it.isBest }?.text.orEmpty()
+                            "${aq.question.take(30)}->${best}"
+                        }}")
+                    }
+                    if (cw.lostItems.isNotEmpty()) {
+                        sb.appendLine("- 失物：${cw.lostItems.joinToString("、") { it.name }}")
+                    }
+                    cw.teaParty?.let { tp ->
+                        if (tp.favoriteTeas.isNotEmpty()) {
+                            sb.appendLine("- 茶会最爱茶叶：${tp.favoriteTeas.joinToString("、")}")
+                        }
+                        if (tp.blushLikedTopics.isNotEmpty()) {
+                            sb.appendLine("- 茶会脸红（喜欢）话题：${tp.blushLikedTopics.take(8).joinToString("、")}")
+                        }
+                        if (tp.finalComments.isNotEmpty()) {
+                            sb.appendLine("- 茶会第4轮应答示例：${tp.finalComments.take(4).joinToString("；") { fc ->
+                                val v = fc.variant?.let { "[$it]" }.orEmpty()
+                                "$v${fc.commentZh.take(36)}=>${fc.validAnswers.joinToString("/")}"
+                            }}")
+                        }
+                    }
+                }
+                detail.teaPartyGuide?.let { tp ->
+                    if (detail.characterWiki == null) {
+                        if (tp.favoriteTeas.isNotEmpty()) {
+                            sb.appendLine("- 最爱茶叶：${tp.favoriteTeas.joinToString("、")}")
+                        }
+                        if (tp.blushLikedTopics.isNotEmpty()) {
+                            sb.appendLine("- 脸红（喜欢）话题：${tp.blushLikedTopics.take(8).joinToString("、")}")
+                        }
+                        if (tp.interestedTopics.isNotEmpty()) {
+                            sb.appendLine("- 一般喜欢话题：${tp.interestedTopics.take(12).joinToString("、")}")
+                        }
+                        if (tp.finalComments.isNotEmpty()) {
+                            sb.appendLine("- 茶会第4轮应答：")
+                            tp.finalComments.take(9).forEach { fc ->
+                                val v = fc.variant?.let { "[$it]" }.orEmpty()
+                                sb.appendLine("  * $v${fc.commentZh.take(60)} -> ${fc.validAnswers.joinToString(" / ")}")
+                            }
+                        }
+                    }
                 }
                 detail.sections.forEach { sec ->
                     if (sb.length >= MAX_DETAIL_CHARS) return@forEach

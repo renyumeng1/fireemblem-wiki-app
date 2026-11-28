@@ -252,6 +252,27 @@ class GameDataV1Repository private constructor(
                 }
             }
         }
+        "social" -> database.rawQuery(
+            "SELECT a.activity_type, COUNT(*) " +
+                "FROM activity_details a JOIN content_entries e ON e.id = a.entry_id " +
+                "WHERE e.category_id = 'social' AND a.activity_type IS NOT NULL AND trim(a.activity_type) != '' " +
+                "GROUP BY a.activity_type " +
+                "ORDER BY CASE WHEN a.activity_type = '茶会指南' THEN 0 ELSE 1 END, COUNT(*) DESC, a.activity_type",
+            null,
+        ).use { cursor ->
+            buildList {
+                while (cursor.moveToNext()) {
+                    val activityType = cursor.getString(0).trim()
+                    add(
+                        GamePackFilterOption(
+                            value = "atype:$activityType",
+                            label = activityType,
+                            count = cursor.getInt(1),
+                        ),
+                    )
+                }
+            }
+        }
         else -> emptyList()
     }
 
@@ -263,6 +284,7 @@ class GameDataV1Repository private constructor(
             group.startsWith("route:") -> group.removePrefix("route:")
             group.startsWith("stype:") -> group.removePrefix("stype:")
             group.startsWith("eqsub:") -> group.removePrefix("eqsub:")
+            group.startsWith("atype:") -> group.removePrefix("atype:")
             else -> group
         }
         val fuzzyTokens = if (query.isNotEmpty()) FuzzyMatcher.tokenize(query) else emptyList()
@@ -278,6 +300,8 @@ class GameDataV1Repository private constructor(
                         add("EXISTS (SELECT 1 FROM equipment_details ed WHERE ed.entry_id=e.id AND ed.subtype=?)")
                     (request.categoryId == "chapters" || request.categoryId == "battles") && group.startsWith("route:") ->
                         add("EXISTS (SELECT 1 FROM chapter_details cd WHERE cd.entry_id=e.id AND cd.route=?)")
+                    request.categoryId == "social" && group.startsWith("atype:") ->
+                        add("EXISTS (SELECT 1 FROM activity_details ad WHERE ad.entry_id=e.id AND ad.activity_type=?)")
                     else -> add("e.subtitle=?")
                 }
             }
@@ -317,6 +341,8 @@ class GameDataV1Repository private constructor(
                             add("EXISTS (SELECT 1 FROM equipment_details ed WHERE ed.entry_id=e.id AND ed.subtype=?)")
                         (request.categoryId == "chapters" || request.categoryId == "battles") && group.startsWith("route:") ->
                             add("EXISTS (SELECT 1 FROM chapter_details cd WHERE cd.entry_id=e.id AND cd.route=?)")
+                        request.categoryId == "social" && group.startsWith("atype:") ->
+                            add("EXISTS (SELECT 1 FROM activity_details ad WHERE ad.entry_id=e.id AND ad.activity_type=?)")
                         else -> add("e.subtitle=?")
                     }
                 }
@@ -494,12 +520,21 @@ class GameDataV1Repository private constructor(
         val rawDesc = row.second
         val sections = mutableListOf<GamePackDetailSection>()
         var isCommunityOpinion = summary.categoryId == "community-skill-ratings"
+        var teaPartyGuide: GamePackTeaPartyGuide? = null
 
         if (rawDesc.isNotBlank()) {
             val jsonObj = runCatching { JSONObject(rawDesc) }.getOrNull()
             if (jsonObj != null) {
                 if (jsonObj.optString("claim_type") == "community_opinion") {
                     isCommunityOpinion = true
+                }
+                jsonObj.optJSONObject("tea_party")?.let { teaObj ->
+                    teaPartyGuide = parseTeaPartyGuide(
+                        teaObj = teaObj,
+                        characterName = jsonObj.optString("character_name_zh").takeIf { it.isNotBlank() },
+                        affiliation = jsonObj.optString("affiliation").takeIf { it.isNotBlank() },
+                        isDlcOrPatch = jsonObj.optBoolean("is_dlc_or_patch", false),
+                    )
                 }
                 val fieldsObj = jsonObj.optJSONObject("fields")
                 if (fieldsObj != null) {
@@ -545,7 +580,12 @@ class GameDataV1Repository private constructor(
 
         val supportConversations = mutableListOf<SupportRankConversation>()
         readTypedDetails(id, supportConversations).forEach { section ->
-            if (section.fields.isNotEmpty()) sections += section
+            val filteredFields = if (teaPartyGuide != null && section.title == "据点活动") {
+                section.fields.filterNot { it.label == "活动类型" && it.value == "茶会指南" }
+            } else {
+                section.fields
+            }
+            if (filteredFields.isNotEmpty()) sections += section.copy(fields = filteredFields)
         }
 
         val rawRelations = database.rawQuery(
@@ -624,6 +664,7 @@ class GameDataV1Repository private constructor(
             images = images,
             characterWiki = characterWiki,
             supportConversations = supportConversations,
+            teaPartyGuide = teaPartyGuide,
         )
     }
 
@@ -970,6 +1011,105 @@ class GameDataV1Repository private constructor(
             }
         }
 
+        val lectureQuestions = buildList {
+            val arr = wikiObj?.optJSONArray("lecture_questions")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val qObj = arr.optJSONObject(i) ?: continue
+                    val qText = qObj.optString("question_zh", "").trim()
+                    if (qText.isEmpty()) continue
+                    val part = qObj.optString("part", "第一部").trim().ifEmpty { "第一部" }
+                    val compsArr = qObj.optJSONArray("companions")
+                    val companions = buildList {
+                        if (compsArr != null) {
+                            for (j in 0 until compsArr.length()) {
+                                compsArr.optString(j).trim().takeIf { it.isNotEmpty() }?.let(::add)
+                            }
+                        }
+                    }
+                    val optsArr = qObj.optJSONArray("options")
+                    val options = buildList {
+                        if (optsArr != null) {
+                            for (j in 0 until optsArr.length()) {
+                                val optObj = optsArr.optJSONObject(j) ?: continue
+                                val optText = optObj.optString("text_zh", "").trim()
+                                if (optText.isEmpty()) continue
+                                val reactArr = optObj.optJSONArray("reactions")
+                                val reactions = buildList {
+                                    if (reactArr != null) {
+                                        for (k in 0 until reactArr.length()) {
+                                            val rObj = reactArr.optJSONObject(k) ?: continue
+                                            val actor = rObj.optString("actor", "").trim()
+                                            val sentiment = rObj.optString("sentiment", "").trim()
+                                            val sentimentZh = rObj.optString("sentiment_zh", "").trim()
+                                            if (actor.isNotEmpty() && sentimentZh.isNotEmpty()) {
+                                                add(GamePackLectureReaction(actor, sentiment, sentimentZh))
+                                            }
+                                        }
+                                    }
+                                }
+                                add(
+                                    GamePackLectureOption(
+                                        text = optText,
+                                        recommended = optObj.optBoolean("recommended", false),
+                                        askerLikes = optObj.optBoolean("asker_likes", false),
+                                        reactions = reactions,
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                    add(GamePackLectureQuestion(part = part, companions = companions, question = qText, options = options))
+                }
+            }
+        }
+
+        val teaParty = parseTeaPartyGuide(
+            teaObj = wikiObj?.optJSONObject("tea_party"),
+            characterName = selfShort,
+            affiliation = affiliation,
+            isDlcOrPatch = false,
+        )
+
+        val adviceQuestions = buildList {
+            val arr = wikiObj?.optJSONArray("advice_questions")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val qObj = arr.optJSONObject(i) ?: continue
+                    val qText = qObj.optString("question_zh", "").trim()
+                    if (qText.isEmpty()) continue
+                    val part = qObj.optString("part", "第一部").trim().ifEmpty { "第一部" }
+                    val optsArr = qObj.optJSONArray("options")
+                    val options = buildList {
+                        if (optsArr != null) {
+                            for (j in 0 until optsArr.length()) {
+                                val optObj = optsArr.optJSONObject(j) ?: continue
+                                val optText = optObj.optString("text_zh", "").trim()
+                                if (optText.isNotEmpty()) {
+                                    add(GamePackAdviceOption(optText, optObj.optBoolean("is_best", false)))
+                                }
+                            }
+                        }
+                    }
+                    add(GamePackAdviceQuestion(part = part, question = qText, options = options))
+                }
+            }
+        }
+
+        val lostItems = buildList {
+            val arr = wikiObj?.optJSONArray("lost_items")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val liObj = arr.optJSONObject(i) ?: continue
+                    val name = liObj.optString("name_zh", "").trim()
+                    val clue = liObj.optString("clue_zh", "").trim()
+                    if (name.isNotEmpty()) {
+                        add(GamePackLostItem(name = name, clue = clue))
+                    }
+                }
+            }
+        }
+
         return GamePackCharacterWikiData(
             affiliation = affiliation,
             startingClass = startingClass,
@@ -989,6 +1129,74 @@ class GameDataV1Repository private constructor(
             dislikedGifts = dislikedGifts,
             likedMeals = likedMeals,
             dislikedMeals = dislikedMeals,
+            lectureQuestions = lectureQuestions,
+            teaParty = teaParty,
+            adviceQuestions = adviceQuestions,
+            lostItems = lostItems,
+        )
+    }
+
+    private fun parseTeaPartyGuide(
+        teaObj: JSONObject?,
+        characterName: String?,
+        affiliation: String?,
+        isDlcOrPatch: Boolean,
+    ): GamePackTeaPartyGuide? {
+        if (teaObj == null) return null
+        val favoriteTeas = buildList {
+            val arr = teaObj.optJSONArray("favorite_teas")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i)
+                    val zh = obj?.optString("name_zh", "")?.trim().orEmpty()
+                    if (zh.isNotEmpty()) add(zh)
+                }
+            }
+        }
+        fun readStrList(key: String): List<String> = buildList {
+            val arr = teaObj.optJSONArray(key) ?: return@buildList
+            for (i in 0 until arr.length()) {
+                arr.optString(i).trim().takeIf { it.isNotEmpty() }?.let(::add)
+            }
+        }
+        val finalComments = buildList {
+            val arr = teaObj.optJSONArray("final_comments")
+            if (arr != null) {
+                for (i in 0 until arr.length()) {
+                    val obj = arr.optJSONObject(i) ?: continue
+                    val commentZh = obj.optString("comment_zh", "").trim()
+                    val commentEn = obj.optString("comment_en", "").trim()
+                    val ansArr = obj.optJSONArray("valid_answers")
+                    val validAnswers = buildList {
+                        if (ansArr != null) {
+                            for (j in 0 until ansArr.length()) {
+                                ansArr.optString(j).trim().takeIf { it.isNotEmpty() }?.let(::add)
+                            }
+                        }
+                    }
+                    val variant = obj.optString("variant", "").trim().takeIf { it.isNotEmpty() }
+                    if (commentZh.isNotEmpty() && validAnswers.isNotEmpty()) {
+                        add(
+                            GamePackTeaFinalComment(
+                                commentZh = commentZh,
+                                commentEn = commentEn,
+                                validAnswers = validAnswers,
+                                variant = variant,
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+        return GamePackTeaPartyGuide(
+            characterName = characterName,
+            affiliation = affiliation,
+            isDlcOrPatch = isDlcOrPatch,
+            favoriteTeas = favoriteTeas,
+            interestedTopics = readStrList("interested_topics"),
+            blushLikedTopics = readStrList("blush_liked_topics"),
+            blushDislikedTopics = readStrList("blush_disliked_topics"),
+            finalComments = finalComments,
         )
     }
 
@@ -1830,6 +2038,7 @@ private fun relationLabel(type: String): String = when (type) {
     "class_growth_profile", "class_growth" -> "职业成长对照"
     "class_innate_ability" -> "职业内置特技"
     "class_mastery_ability" -> "职业精通特技"
+    "character_tea_party" -> "茶会指南"
     "crest_bearer" -> "纹章持有者"
     "dislikes_gift" -> "不喜欢的礼物"
     "likes_gift" -> "喜欢的礼物"

@@ -3979,6 +3979,268 @@ def _enrich_three_houses_classes_battalions_supports(
     return (copied_count, total_bytes)
 
 
+def _enrich_three_houses_academy_and_tea(
+    conn: sqlite3.Connection,
+    th_root: Path,
+    output_game_dir: Path,
+    max_image_dim: int = 192,
+) -> tuple[int, int]:
+    """Attach Three Houses classroom lecture Q&A, advice box, lost items, and full Tea Party guides
+    (covering all 40 base + DLC/patch characters) to `characters` and `social`."""
+    data_path = th_root / "sources" / "extracts" / "three-houses-academy-social-zh.json"
+    if not data_path.is_file():
+        return (0, 0)
+
+    payload = json.loads(data_path.read_text(encoding="utf-8"))
+    char_items = payload.get("characters", [])
+    if not char_items:
+        return (0, 0)
+
+    copied_count = 0
+    total_bytes = 0
+
+    def norm_char_token(s: str) -> str:
+        return re.sub(r"[\s·•・()（）/]+", "", (s or "")).lower()
+
+    db_chars: list[tuple[str, str, str, str, str]] = conn.execute(
+        """
+        SELECT id, title, COALESCE(title_en,''), COALESCE(description,''), COALESCE(search_text,'')
+        FROM content_entries
+        WHERE category_id = 'characters'
+        """
+    ).fetchall()
+
+    by_title_exact: dict[str, tuple[str, str, str]] = {}
+    by_prefix: dict[str, tuple[str, str, str]] = {}
+    by_en_word: dict[str, tuple[str, str, str]] = {}
+    for eid, title, title_en, desc, search_txt in db_chars:
+        by_title_exact[norm_char_token(title)] = (eid, desc, search_txt)
+        by_prefix[norm_char_token(title.split("·")[0])] = (eid, desc, search_txt)
+        en_first = (title_en or "").strip().split()[0].lower() if (title_en or "").strip() else ""
+        if en_first:
+            by_en_word[en_first] = (eid, desc, search_txt)
+
+    matched_chars = 0
+    has_activity_details = _has_table(conn, "activity_details")
+    has_relations = _has_table(conn, "content_relations")
+    asset_cols = {row[1] for row in conn.execute("PRAGMA table_info(content_assets)")}
+    assets_base = th_root / "assets"
+    dest_app_dir = output_game_dir / "assets" / "app"
+    dest_app_dir.mkdir(parents=True, exist_ok=True)
+
+    for item in char_items:
+        slug = item["slug"]
+        short_zh = item["short_name_zh"]
+        db_title = item["db_title"]
+        tea_party = item["tea_party"]
+        classroom_qs = item.get("classroom_questions", [])
+        advice_qs = item.get("advice_questions", [])
+        lost_items = item.get("lost_items", [])
+
+        # Match 39 playable non-Byleth characters into `characters` (Rhea is non-playable, only in `social`)
+        char_row = (
+            by_title_exact.get(norm_char_token(db_title))
+            or by_prefix.get(norm_char_token(short_zh))
+            or by_en_word.get(slug.lower())
+        )
+        char_entry_id: str | None = None
+        if char_row is not None:
+            char_entry_id, raw_desc, cur_search = char_row
+            matched_chars += 1
+            try:
+                desc_obj = json.loads(raw_desc) if raw_desc.strip().startswith("{") else {}
+            except Exception:
+                desc_obj = {}
+            if not isinstance(desc_obj, dict):
+                desc_obj = {}
+            wiki_profile = desc_obj.get("wiki_profile")
+            if not isinstance(wiki_profile, dict):
+                wiki_profile = {}
+            wiki_profile["lecture_questions"] = classroom_qs
+            wiki_profile["advice_questions"] = advice_qs
+            wiki_profile["lost_items"] = lost_items
+            wiki_profile["tea_party"] = tea_party
+            desc_obj["wiki_profile"] = wiki_profile
+
+            extra_tokens: list[str] = []
+            for q in classroom_qs:
+                extra_tokens.append(q["question_zh"])
+                for opt in q.get("options", []):
+                    if opt.get("recommended"):
+                        extra_tokens.append(opt["text_zh"])
+            for aq in advice_qs:
+                extra_tokens.append(aq["question_zh"])
+                for opt in aq.get("options", []):
+                    if opt.get("is_best"):
+                        extra_tokens.append(opt["text_zh"])
+            for li in lost_items:
+                extra_tokens.append(li["name_zh"])
+            for tea in tea_party.get("favorite_teas", []):
+                extra_tokens.append(tea["name_zh"])
+                extra_tokens.append(tea["name_en"])
+            extra_tokens.extend(tea_party.get("blush_liked_topics", []))
+            for fc in tea_party.get("final_comments", []):
+                extra_tokens.append(fc["comment_zh"])
+                extra_tokens.extend(fc.get("valid_answers", []))
+
+            extra_search = " ".join(tok for tok in extra_tokens if tok)
+            new_search = f"{cur_search} {extra_search}".strip() if extra_search not in cur_search else cur_search
+            conn.execute(
+                "UPDATE content_entries SET description=?, search_text=? WHERE id=?",
+                (json.dumps(desc_obj, ensure_ascii=False), new_search, char_entry_id),
+            )
+        elif slug != "Rhea":
+            raise RuntimeError(f"Failed to match character entry in DB for {slug} ({db_title})")
+
+        # Create/update standalone Tea Party guide entry under `social` (all 40 including DLC + Rhea)
+        tea_entry_id = f"social:tea-guide-{item['sf_slug']}"
+        stable_key = f"tea-guide-{item['sf_slug']}"
+        title = f"{short_zh} · 茶会攻略"
+        title_en = f"{slug} Tea Party Guide"
+        fav_preview = "、".join(t["name_zh"] for t in tea_party.get("favorite_teas", [])[:3])
+        affiliation = item["affiliation"]
+        subtitle = f"{affiliation} · 最爱：{fav_preview}" if fav_preview else f"{affiliation} · 茶会攻略"
+
+        desc_payload = {
+            "character_name_zh": short_zh,
+            "affiliation": affiliation,
+            "is_dlc_or_patch": bool(item.get("is_dlc_or_patch", False)),
+            "tea_party": tea_party,
+        }
+        tea_search_parts = [
+            title,
+            title_en,
+            short_zh,
+            db_title,
+            affiliation,
+            "茶会",
+            "茶会攻略",
+        ]
+        for tea in tea_party.get("favorite_teas", []):
+            tea_search_parts.extend([tea["name_zh"], tea["name_en"]])
+        tea_search_parts.extend(tea_party.get("interested_topics", []))
+        tea_search_parts.extend(tea_party.get("blush_liked_topics", []))
+        for fc in tea_party.get("final_comments", []):
+            tea_search_parts.append(fc["comment_zh"])
+            tea_search_parts.append(fc.get("comment_en", ""))
+            tea_search_parts.extend(fc.get("valid_answers", []))
+
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO content_entries(
+                id, category_id, stable_key, title, title_ja, title_en,
+                subtitle, description, search_text, verification_status
+            ) VALUES(?,?,?,?,?,?,?,?,?,?)
+            """,
+            (
+                tea_entry_id,
+                "social",
+                stable_key,
+                title,
+                None,
+                title_en,
+                subtitle,
+                json.dumps(desc_payload, ensure_ascii=False),
+                " ".join(p for p in tea_search_parts if p),
+                "confirmed",
+            ),
+        )
+
+        if has_activity_details:
+            if slug in ("Yuri", "Balthus", "Constance", "Hapi", "Anna"):
+                availability = "煤暗之章 DLC 解锁后可邀请"
+            elif slug in ("Jeritza", "Rhea"):
+                availability = "免费更新 / 对应路线开放后可邀请"
+            else:
+                availability = "第一部第 4 节开放茶会后可邀请"
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO activity_details(
+                    entry_id, activity_type, availability_condition, options_json, effects_json
+                ) VALUES(?,?,?,?,?)
+                """,
+                (tea_entry_id, "茶会指南", availability, None, None),
+            )
+
+        # Attach character portrait to Tea Party `social` entry
+        if char_entry_id is not None:
+            portrait_row = conn.execute(
+                """
+                SELECT ea.asset_id FROM entry_assets ea
+                JOIN content_assets ca ON ca.asset_id = ea.asset_id
+                WHERE ea.entry_id = ? AND ca.app_file IS NOT NULL
+                ORDER BY CASE ea.role
+                    WHEN 'character_portrait_primary' THEN 0
+                    WHEN 'character_portrait_candidate' THEN 1
+                    ELSE 2 END, ea.role LIMIT 1
+                """,
+                (char_entry_id,),
+            ).fetchone()
+            if portrait_row:
+                conn.execute(
+                    "INSERT OR REPLACE INTO entry_assets(entry_id, asset_id, role, locator) VALUES(?,?,?,?)",
+                    (tea_entry_id, portrait_row[0], "character_portrait_primary", "tea_guide"),
+                )
+        elif slug == "Rhea":
+            rhea_rel = "original/portraits/80396_Rhea Portrait.png"
+            rhea_src = assets_base / rhea_rel
+            if rhea_src.is_file():
+                aid = "asset:th-portrait-rhea-tea"
+                out_name = "th_rhea_portrait_tea.webp"
+                dst_file = dest_app_dir / out_name
+                app_rel = f"assets/app/{out_name}"
+                w, h, app_b, app_sha = _convert_image_to_webp(
+                    rhea_src, dst_file, max_dim=max_image_dim, lossless_small=False,
+                )
+                _upsert_content_asset_row(
+                    conn,
+                    asset_cols,
+                    aid,
+                    rhea_rel,
+                    app_rel,
+                    rhea_src,
+                    "character_portrait",
+                    {"rights_status": "personal_use_only"},
+                    w=w,
+                    h=h,
+                    app_bytes=app_b,
+                    app_sha=app_sha,
+                )
+                copied_count += 1
+                total_bytes += app_b
+                conn.execute(
+                    "INSERT OR REPLACE INTO entry_assets(entry_id, asset_id, role, locator) VALUES(?,?,?,?)",
+                    (tea_entry_id, aid, "character_portrait_primary", "tea_guide"),
+                )
+
+        if has_relations and char_entry_id is not None:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO content_relations(
+                    source_entry_id, target_entry_id, relation_type,
+                    evidence, verification_status, source_id, locator
+                ) VALUES(?,?,?,?,?,?,?)
+                """,
+                (
+                    char_entry_id,
+                    tea_entry_id,
+                    "character_tea_party",
+                    "Fedatamine + Samurai Gamers Tea Party Guide",
+                    "confirmed",
+                    None,
+                    "tea_guide",
+                ),
+            )
+
+    if matched_chars != 39:
+        raise RuntimeError(f"Expected 39 playable characters enriched in DB, got {matched_chars}")
+
+    conn.execute(
+        "UPDATE categories SET record_count=(SELECT COUNT(*) FROM content_entries WHERE category_id='social') WHERE id='social'"
+    )
+    return (copied_count, total_bytes)
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -4099,6 +4361,11 @@ def prepare_single_game_pack(
                         )
                         asset_files_copied += extra_cnt2
                         asset_total_bytes += extra_bytes2
+                        extra_cnt3, extra_bytes3 = _enrich_three_houses_academy_and_tea(
+                            conn, source_assets_root, output_game_dir, max_image_dim=max_image_dim,
+                        )
+                        asset_files_copied += extra_cnt3
+                        asset_total_bytes += extra_bytes3
                     else:
                         _finalize_three_houses_magic_entries(conn)
                 for stmt in INDEX_STATEMENTS:
@@ -4107,6 +4374,8 @@ def prepare_single_game_pack(
                     conn.execute("CREATE INDEX IF NOT EXISTS idx_char_details_affiliation ON character_details(affiliation, entry_id)")
                 if _has_table(conn, "class_details"):
                     conn.execute("CREATE INDEX IF NOT EXISTS idx_class_details_tier ON class_details(tier, entry_id)")
+                if _has_table(conn, "activity_details"):
+                    conn.execute("CREATE INDEX IF NOT EXISTS idx_activity_details_type ON activity_details(activity_type, entry_id)")
                 conn.execute("DELETE FROM content_metadata WHERE key IN ('stripped_workbook_cells','pack_flavor')")
                 conn.execute("INSERT INTO content_metadata VALUES('pack_flavor','android-readonly')")
                 conn.execute("INSERT INTO content_metadata VALUES('stripped_workbook_cells','1')")
