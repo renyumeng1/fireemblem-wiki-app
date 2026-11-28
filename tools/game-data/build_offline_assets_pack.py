@@ -126,7 +126,8 @@ def main() -> None:
 
     verify_zip(zip_path)
     digest = sha256_file(zip_path)
-    sha_path.write_text(f"{digest}  offline-assets-pack.zip\n", encoding="utf-8")
+    sha_path.write_bytes(f"{digest}  offline-assets-pack.zip\n".encode("utf-8"))
+    assert len(sha_path.read_bytes()) == 90, f"Unexpected sha256 file length: {len(sha_path.read_bytes())}"
 
     size_mb = zip_path.stat().st_size / (1024 * 1024)
     print(

@@ -74,7 +74,7 @@ jobs:
               git fetch origin assets-pack:refs/remotes/origin/assets-pack --depth=1
               git show origin/assets-pack:offline-assets-pack.zip > "${PACK_DIR}/offline-assets-pack.zip"
               git show origin/assets-pack:offline-assets-pack.sha256 > "${PACK_DIR}/offline-assets-pack.sha256"
-              (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+              (cd "${PACK_DIR}" && tr -d '\r' < offline-assets-pack.sha256 | sha256sum -c -)
               if gh release view assets-v1 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
                 gh release upload assets-v1 \
                   "${PACK_DIR}/offline-assets-pack.zip" \
@@ -100,7 +100,7 @@ jobs:
                 --dir "${PACK_DIR}" \
                 --pattern "offline-assets-pack.*"
               if [[ -f "${PACK_DIR}/offline-assets-pack.sha256" ]]; then
-                (cd "${PACK_DIR}" && sha256sum -c offline-assets-pack.sha256)
+                (cd "${PACK_DIR}" && tr -d '\r' < offline-assets-pack.sha256 | sha256sum -c -)
               fi
             else
               echo "::error::Missing offline assets! Upload offline-assets-pack.zip to release 'assets-v1' or set secret ASSETS_PACK_URL."
